@@ -1,3 +1,10 @@
+/**
+ * Property of the Earn G. Bautista and Team
+ * Reuse as a whole or in part is prohibited without permission.
+ */
+
+import 'bootstrap/dist/css/bootstrap.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';

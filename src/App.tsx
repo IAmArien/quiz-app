@@ -1,25 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
+/**
+ * Property of the Earn G. Bautista and Team
+ * Reuse as a whole or in part is prohibited without permission.
+ */
+
+
 import './App.css';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Login, Root } from './screens';
 
 function App() {
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Root />
+    },
+    {
+      path: "/instructor",
+      element: <Login />
+    }
+  ]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <RouterProvider router={router} />
   );
 }
 
