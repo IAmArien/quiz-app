@@ -3,8 +3,7 @@
  * Reuse as a whole or in part is prohibited without permission.
  */
 
-
-import './App.css';
+import './styles/App.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Login, Root } from './screens';
 
