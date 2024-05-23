@@ -5,7 +5,11 @@
 
 import './styles/App.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { Login, Root } from './screens';
+import {
+  Login as InstructorLogin,
+  Register as InstructorRegister,
+  Root
+} from './screens';
 
 function App() {
 
@@ -16,7 +20,11 @@ function App() {
     },
     {
       path: "/instructor",
-      element: <Login />
+      element: <InstructorLogin />
+    },
+    {
+      path: "/instructor/register",
+      element: <InstructorRegister />
     }
   ]);
 
