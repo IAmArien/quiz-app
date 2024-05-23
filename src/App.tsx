@@ -6,6 +6,7 @@
 import './styles/App.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import {
+  Dashboard as InstructorDashboard,
   Login as InstructorLogin,
   Register as InstructorRegister,
   Root
@@ -25,6 +26,10 @@ function App() {
     {
       path: "/instructor/register",
       element: <InstructorRegister />
+    },
+    {
+      path: "/instructor/dashboard",
+      element: <InstructorDashboard />
     }
   ]);
 
