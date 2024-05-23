@@ -5,11 +5,14 @@
 
 import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { merge } from "../../../utils";
 
 export const Login = (): JSX.Element => {
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
+
+  const [isError, setIsError] = useState(false);
 
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -33,25 +36,36 @@ export const Login = (): JSX.Element => {
                   <input
                     type="email"
                     name="email"
-                    className="form-control open-sans"
+                    className={merge("form-control open-sans", {
+                      "border-[red]": isError
+                    })}
                     placeholder="Email Address"
                     required
                     value={emailAddress}
                     onChange={(event) => {
                       setEmailAddress(event.currentTarget.value);
+                      setIsError(false);
                     }}
                   />
                   <input
                     type="password"
                     name="password"
-                    className="form-control open-sans"
+                    className={merge("form-control open-sans", {
+                      "border-[red]": isError
+                    })}
                     placeholder="Password"
                     required
                     value={password}
                     onChange={(event) => {
                       setPassword(event.currentTarget.value);
+                      setIsError(false);
                     }}
                   />
+                  {isError && (
+                    <p className="text-[red] text-[13px] open-sans-500">
+                      Invalid email or password.
+                    </p>
+                  )}
                   <Button className="open-sans-600" type="submit" variant="success">
                     Login
                   </Button>
