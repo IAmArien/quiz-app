@@ -8,7 +8,9 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import {
   Dashboard as InstructorDashboard,
   Login as InstructorLogin,
+  Profile as InstructorProfile,
   Register as InstructorRegister,
+  Subjects as InstructorSubjects,
   Root
 } from './screens';
 
@@ -30,6 +32,14 @@ function App() {
     {
       path: "/instructor/dashboard",
       element: <InstructorDashboard />
+    },
+    {
+      path: "/instructor/profile",
+      element: <InstructorProfile />
+    },
+    {
+      path: "/instructor/subjects",
+      element: <InstructorSubjects />
     }
   ]);
 

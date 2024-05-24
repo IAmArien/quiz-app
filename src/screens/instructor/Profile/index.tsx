@@ -7,11 +7,11 @@ import { Container } from "react-bootstrap";
 import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
 
-export const Dashboard = (): JSX.Element => {
+export const Profile = (): JSX.Element => {
   const navigate = useNavigate();
   return (
     <MainContainer
-      title="Dashboard"
+      title="Profile"
       profile={{
         name: "Norman Conche Palisoc",
         email: "myemail@gmail.com"
@@ -20,7 +20,7 @@ export const Dashboard = (): JSX.Element => {
         {
           icon: <i className="fa-solid fa-gauge"></i>,
           label: "Dashboard",
-          selected: true,
+          selected: false,
           onClick: () => {
             navigate("/instructor/dashboard");
           }
@@ -36,7 +36,7 @@ export const Dashboard = (): JSX.Element => {
         {
           icon: <i className="fa-solid fa-circle-user"></i>,
           label: "Profile",
-          selected: false,
+          selected: true,
           onClick: () => {
             navigate("/instructor/profile");
           }
