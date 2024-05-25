@@ -80,15 +80,15 @@ export const MainContainer: React.FC<TMainContainerProps> = (props): JSX.Element
           <div className="container-fluid">
             <a className="navbar-brand text-[17px] open-sans-600" href="#">
               &nbsp;&nbsp;&nbsp;&nbsp;
-              <i id="navbar-control" className="fa-solid fa-bars" style={{ cursor: "pointer" }}></i>
+              <i id="navbar-control" className="fa-solid fa-bars cursor-pointer" style={{ cursor: "pointer" }}></i>
               &nbsp;&nbsp;&nbsp;&nbsp;
-              Instructor
+              {/* Instructor
               {title && title !== '' && (
                 <>
                   &nbsp;&nbsp;<i className="fa-solid fa-chevron-right"></i>&nbsp;&nbsp;
                   {title}
                 </>
-              )}
+              )} */}
             </a>
           </div>
         </nav>
