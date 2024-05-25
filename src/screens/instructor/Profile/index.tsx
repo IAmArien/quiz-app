@@ -75,7 +75,7 @@ export const Profile = (): JSX.Element => {
       <Container>
         <div>
           <Row>
-            <Col lg={6} md={8} sm={12}>
+            <Col lg={6} md={12} sm={12}>
               <div className="bg-[#FFFFFF] rounded-[10px] pt-[30px]">
                 <h3 className="text-[25px] open-sans">
                   Update your Instructor account
