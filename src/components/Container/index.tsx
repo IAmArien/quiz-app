@@ -17,7 +17,6 @@ export type TMainContainerSidebar = {
 
 export type TMainContainerSidebarProfile = {
   name: string;
-  email: string;
 };
 
 export type TMainContainerProps = PropsWithChildren & {
@@ -36,36 +35,46 @@ export const MainContainer: React.FC<TMainContainerProps> = (props): JSX.Element
 
   return (
     <div className="flex flex-row">
-      <div className="flex flex-col fixed top-0 left-0 bottom-0 h-full w-[300px] bg-[#F0F0F0]">
-        <div className="w-[300px] flex flex-row items-center gap-[12px] px-[20px] mt-[20px]">
-          <i className="fa-solid fa-circle-user text-[50px]"></i>
-          <div className="flex flex-col flex-1">
-            <h3 className="open-sans-600">
-              {profile.name}
-            </h3>
-            <p className="open-sans text-[#8c8c8c]">
-              {profile.email}
-            </p>
+      {/** SIDE BAR  */}
+      <div className="flex flex-col fixed top-0 left-0 bottom-0 h-full w-[300px] bg-[#262f40]">
+        <div className="flex-1">
+          <div className="flex flex-col gap-[10px] px-[10px] mt-[10px]">
+            {sidebar.map((value: TMainContainerSidebar, index: number) => {
+              return (
+                <React.Fragment key={index}>
+                  <Button
+                    variant="outline-primary"
+                    className={merge(
+                      "open-sans border-[0px] text-left px-[20px] py-[10px] text-[#FFFFFF] flex flex-row items-center gap-[12px]",
+                      {
+                        "bg-[#161d2d]": value.selected,
+                        "open-sans-600": value.selected,
+                        "hover:bg-[#161d2d]": true
+                      }
+                    )}
+                    onClick={() => value.onClick()}>
+                    {value.icon}
+                    {value.label}
+                  </Button>
+                </React.Fragment>
+              )
+            })}
           </div>
         </div>
-        <div className="flex flex-col gap-[10px] px-[20px] mt-[30px]">
-          {sidebar.map((value: TMainContainerSidebar, index: number) => {
-            return (
-              <React.Fragment key={index}>
-                <Button
-                  variant={value.selected ? "success" : "secondary"}
-                  className={merge("open-sans text-left pl-[20px] flex flex-row items-center gap-[12px]", {
-                    "open-sans-600": value.selected
-                  })}
-                  onClick={() => value.onClick()}>
-                  {value.icon}
-                  {value.label}
-                </Button>
-              </React.Fragment>
-            )
-          })}
+        <div className="w-[300px] flex flex-row items-center gap-[12px] px-[20px] mb-[20px]">
+          <i className="fa-regular fa-circle-user text-[40px] text-[#FFFFFF]"></i>
+          <div className="flex flex-col flex-1 gap-[2px]">
+            <h3 className="open-sans-600 text-[#FFFFFF]">
+              {profile.name}
+            </h3>
+            <p className="open-sans text-[13px] text-[#FFFFFF]">
+              View Profile
+            </p>
+          </div>
+          <i className="fa-regular fa-gear text-[#FFFFFF] text-[20px]"></i>
         </div>
       </div>
+      {/** MAIN CONTAINER */}
       <div className="flex-1 flex flex-col pl-[300px]">
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <div className="container-fluid">

@@ -13,8 +13,7 @@ export const Subjects = (): JSX.Element => {
     <MainContainer
       title="Subjects"
       profile={{
-        name: "Norman Conche Palisoc",
-        email: "myemail@gmail.com"
+        name: "Norman Palisoc"
       }}
       sidebar={[
         {
@@ -31,6 +30,14 @@ export const Subjects = (): JSX.Element => {
           selected: true,
           onClick: () => {
             navigate("/instructor/subjects");
+          }
+        },
+        {
+          icon: <i className="fa-regular fa-bars-progress"></i>,
+          label: "Assessments",
+          selected: false,
+          onClick: () => {
+            navigate("/instructor/assessments");
           }
         },
         {
