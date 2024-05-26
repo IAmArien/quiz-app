@@ -177,6 +177,10 @@ export const Subjects = (): JSX.Element => {
     fontStyle: "normal",
   };
 
+  const addSubjectEnabled = (): boolean => {
+    return subjectTitle !== "" && subjectDesc !== "" && section !== "";
+  };
+
   return (
     <>
       <MainContainer
@@ -292,10 +296,16 @@ export const Subjects = (): JSX.Element => {
           <Button
             className="open-sans-600"
             variant="secondary"
-            onClick={() => setShowAddSubjectModal(false)}>
+            onClick={() => {
+              setShowAddSubjectModal(false);
+              setSubjectTitle("");
+              setSubjectDesc("");
+              setSection("");
+            }}>
             Close
           </Button>
           <Button
+            disabled={!addSubjectEnabled()}
             className="open-sans-600"
             variant="success"
             type="submit"
