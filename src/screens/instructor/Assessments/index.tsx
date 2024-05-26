@@ -14,6 +14,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { loader } from "../../../store/LoaderStore";
 import { toast } from "../../../store/ToastStore";
 import { GetAssessmentResponse, GetSubjectResponse, addAssessment, getAssessments, getSubjects } from "../../../services";
+import { HOST_URL } from "../../../utils/constants";
 
 type TDataTableAssessmentData = {
   id: number | string;
@@ -39,6 +40,7 @@ export const Assessments = (): JSX.Element => {
   const setLoader = useSetAtom(loader);
   const setToast = useSetAtom(toast);
   const [showAddAssessmentModal, setShowAddAssessmentModal] = useState(false);
+  const [showViewAssessment, setShowViewAssessment] = useState(false);
   const [data, setData] = useState<TDataTableAssessmentData[]>([]);
   const [selectedAssessment, setSelectedAssessment] = useState<TDataTableAssessmentData | null>(null);
   const [subjectList, setSubjectList] = useState<TSubjectListSelection[]>([]);
@@ -46,6 +48,7 @@ export const Assessments = (): JSX.Element => {
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentDesc, setAssessmentDesc] = useState("");
 
+  const assessmentLink = `${HOST_URL}/${selectedAssessment?.hash}/${selectedAssessment?.id}`;
   const name = `${getLoginSession.first_name} ${getLoginSession.last_name}`;
 
   const columns = [
@@ -107,6 +110,7 @@ export const Assessments = (): JSX.Element => {
       cell: (row: TDataTableAssessmentData) => (
         <div className="flex flex-row gap-[5px]">
           <Button variant="success" size="sm" onClick={() => {
+            setShowViewAssessment(true);
             setSelectedAssessment(row);
           }}>
             <i className="fa-solid fa-eye"></i>
@@ -230,6 +234,16 @@ export const Assessments = (): JSX.Element => {
         });
       }, 500);
     }
+  };
+
+  const handleOnCopyLink = () => {
+    navigator.clipboard.writeText(assessmentLink);
+    setShowViewAssessment(false);
+    setToast({
+      show: true,
+      title: "Link Copied",
+      description: `${assessmentLink} was copied to clipboard`
+    });
   };
 
   const customAction = (): JSX.Element => {
@@ -384,6 +398,42 @@ export const Assessments = (): JSX.Element => {
             type="submit"
             onClick={handleOnSubmitAssessment}>
             Add Assessment
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showViewAssessment} centered onHide={() => setShowViewAssessment(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title className="open-sans-600">Assessment Link</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="flex flex-col gap-[17px]">
+            <p className="open-sans">
+              Copy this assessment link to view the questions published
+            </p>
+            <input
+              type="text"
+              name="assessment_link"
+              className="form-control open-sans"
+              placeholder="Assessment Link"
+              required
+              value={assessmentLink}
+              readOnly
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="open-sans-600"
+            variant="secondary"
+            onClick={() => setShowViewAssessment(false)}>
+            Close
+          </Button>
+          <Button
+            className="open-sans-600"
+            variant="success"
+            type="submit"
+            onClick={handleOnCopyLink}>
+            Copy Link
           </Button>
         </Modal.Footer>
       </Modal>
