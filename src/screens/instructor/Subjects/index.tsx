@@ -13,7 +13,7 @@ import { loginSession } from '../../../store';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loader } from '../../../store/LoaderStore';
 import { toast } from '../../../store/ToastStore';
-import { addSubject } from '../../../services';
+import { GetSubjectResponse, addSubject, getSubjects } from '../../../services';
 
 type TDataTableSubjectsData = {
   id: number | string;
@@ -110,49 +110,25 @@ export const Subjects = (): JSX.Element => {
     }
   ];
 
+  const fetchSubjects = async () => {
+    const { data } = await getSubjects(getLoginSession.email);
+    if (data.status === 200 && data.message === "Success") {
+      const subjects = data.data.map((value: GetSubjectResponse, index: number) => {
+        return {
+          id: index,
+          subjectId: value.id,
+          subject: value.subject_title,
+          section: value.section,
+          description: value.subject_description,
+          students: value.students
+        }
+      });
+      setData(subjects);
+    }
+  };
+
   useEffect(() => {
-    setData([
-      {
-        id: 1,
-        subjectId: 1,
-        subject: "Mathematics",
-        section: "Section I",
-        description: "Mathematics subject with 3 sections",
-        students: "10 Students"
-      },
-      {
-        id: 2,
-        subjectId: 2,
-        subject: "Mathematics",
-        section: "Section II",
-        description: "Mathematics subject with 3 sections",
-        students: "5 Students"
-      },
-      {
-        id: 3,
-        subjectId: 3,
-        subject: "Mathematics",
-        section: "Section III",
-        description: "Mathematics subject with 3 sections",
-        students: "12 Students"
-      },
-      {
-        id: 4,
-        subjectId: 4,
-        subject: "English III",
-        section: "Section I",
-        description: "English (III) subject with 2 sections",
-        students: "0 Students"
-      },
-      {
-        id: 5,
-        subjectId: 5,
-        subject: "English III",
-        section: "Section II",
-        description: "English (III) subject with 2 sections",
-        students: "0 Students"
-      }
-    ])
+    fetchSubjects();
   }, []);
 
   const handleOnSubmitSubject = async () => {
@@ -161,7 +137,8 @@ export const Subjects = (): JSX.Element => {
     const { data } = await addSubject(
       subjectTitle,
       subjectDesc,
-      section
+      section,
+      getLoginSession.email
     );
     if (data.status === 200 && data.message === "Success") {
       setSubjectTitle("");
@@ -174,6 +151,7 @@ export const Subjects = (): JSX.Element => {
           title: "Added Subject",
           description: "Subject was added successfully"
         });
+        fetchSubjects();
       }, 500);
     }
   };

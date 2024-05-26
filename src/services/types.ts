@@ -23,3 +23,11 @@ export type AddSubjectResponse = {
   section: string;
   students: string;
 };
+
+export type GetSubjectResponse = {
+  id: number;
+  subject_title: string;
+  subject_description: string;
+  section: string;
+  students: string;
+};

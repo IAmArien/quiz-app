@@ -5,7 +5,7 @@
 
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import { AddSubjectResponse, BaseResponse, LoginResponse } from "./types";
+import { AddSubjectResponse, BaseResponse, GetSubjectResponse, LoginResponse } from "./types";
 
 export const login = async (email: string, password: string) => {
   const response = await axios.post<BaseResponse<LoginResponse>>(
@@ -27,14 +27,16 @@ export const login = async (email: string, password: string) => {
 export const addSubject = async (
   title: string,
   description: string,
-  section: string
+  section: string,
+  email: string
 ) => {
   const response = await axios.post<BaseResponse<AddSubjectResponse>>(
     `${BASE_URL}/instructor/add_subject.php`,
     {
       subject: title,
       description,
-      section
+      section,
+      instructor_email: email
     },
     {
       headers: {
@@ -44,3 +46,15 @@ export const addSubject = async (
   );
   return response;
 }
+
+export const getSubjects = async (email: string) => {
+  const response = await axios.get<BaseResponse<GetSubjectResponse[]>>(
+    `${BASE_URL}/instructor/get_subject.php`,
+    {
+      params: {
+        instructor_email: email
+      }
+    }
+  );
+  return response;
+};
