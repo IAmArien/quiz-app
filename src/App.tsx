@@ -6,6 +6,7 @@
 import './styles/App.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import {
+  StudentAssessments,
   Assessments as InstructorAssessments,
   Dashboard as InstructorDashboard,
   Login as InstructorLogin,
@@ -50,6 +51,10 @@ function App() {
     {
       path: "/instructor/assessments/questions/:assessmentHash/:id",
       element: <InstructorQuestions />
+    },
+    {
+      path: "/students/assessment/:assessmentHash/:id",
+      element: <StudentAssessments.Assessment />
     }
   ]);
 

@@ -10,3 +10,4 @@ export const Root = (): JSX.Element => {
 }
 
 export * from './instructor';
+export * from './students';
