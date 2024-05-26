@@ -45,7 +45,7 @@ export const addSubject = async (
     }
   );
   return response;
-}
+};
 
 export const getSubjects = async (email: string) => {
   const response = await axios.get<BaseResponse<GetSubjectResponse[]>>(
@@ -53,6 +53,21 @@ export const getSubjects = async (email: string) => {
     {
       params: {
         instructor_email: email
+      }
+    }
+  );
+  return response;
+};
+
+export const deleteSubject = async (subjectId: number) => {
+  const response = await axios.post<BaseResponse<any>>(
+    `${BASE_URL}/instructor/delete_subject.php`,
+    {
+      subject_id: subjectId
+    },
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
       }
     }
   );

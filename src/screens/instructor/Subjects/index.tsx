@@ -13,10 +13,10 @@ import { loginSession } from '../../../store';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loader } from '../../../store/LoaderStore';
 import { toast } from '../../../store/ToastStore';
-import { GetSubjectResponse, addSubject, getSubjects } from '../../../services';
+import { GetSubjectResponse, addSubject, deleteSubject, getSubjects } from '../../../services';
 
 type TDataTableSubjectsData = {
-  id: number | string;
+  id: number;
   subjectId: number;
   subject: string;
   section: string;
@@ -29,6 +29,7 @@ export const Subjects = (): JSX.Element => {
   const getLoginSession = useAtomValue(loginSession);
   const setLoader = useSetAtom(loader);
   const setToast = useSetAtom(toast);
+  const [showDeleteSubjectModal, setShowDeleteSubjectModal] = useState(false);
   const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<TDataTableSubjectsData | null>(null);
@@ -96,10 +97,15 @@ export const Subjects = (): JSX.Element => {
           }}>
             <i className="fa-solid fa-user-plus"></i>
           </Button>
-          <Button variant="danger" size="sm">
+          <Button variant="danger" size="sm" onClick={() => {
+            setShowDeleteSubjectModal(true);
+            setSelectedSubject(row);
+          }}>
             <i className="fa-regular fa-trash-can"></i>
           </Button>
-          <Button variant="primary" size="sm">
+          <Button variant="primary" size="sm" onClick={() => {
+            setSelectedSubject(row);
+          }}>
             <i className="fa-regular fa-pen-to-square"></i>
           </Button>
           <Button variant="secondary" size="sm" onClick={() => { }}>
@@ -111,19 +117,27 @@ export const Subjects = (): JSX.Element => {
   ];
 
   const fetchSubjects = async () => {
-    const { data } = await getSubjects(getLoginSession.email);
-    if (data.status === 200 && data.message === "Success") {
-      const subjects = data.data.map((value: GetSubjectResponse, index: number) => {
-        return {
-          id: index,
-          subjectId: value.id,
-          subject: value.subject_title,
-          section: value.section,
-          description: value.subject_description,
-          students: value.students
-        }
+    try {
+      const { data } = await getSubjects(getLoginSession.email);
+      if (data.status === 200 && data.message === "Success") {
+        const subjects = data.data.map((value: GetSubjectResponse, index: number) => {
+          return {
+            id: index,
+            subjectId: value.id,
+            subject: value.subject_title,
+            section: value.section,
+            description: value.subject_description,
+            students: value.students
+          }
+        });
+        setData(subjects);
+      }
+    } catch (error) {
+      setToast({
+        show: true,
+        title: "Error Encountered",
+        description: "Something went wrong while action is being done"
       });
-      setData(subjects);
     }
   };
 
@@ -134,24 +148,63 @@ export const Subjects = (): JSX.Element => {
   const handleOnSubmitSubject = async () => {
     setShowAddSubjectModal(false);
     setLoader({ show: true });
-    const { data } = await addSubject(
-      subjectTitle,
-      subjectDesc,
-      section,
-      getLoginSession.email
-    );
-    if (data.status === 200 && data.message === "Success") {
-      setSubjectTitle("");
-      setSubjectDesc("");
-      setSection("");
+    try {
+      const { data } = await addSubject(
+        subjectTitle,
+        subjectDesc,
+        section,
+        getLoginSession.email
+      );
+      if (data.status === 200 && data.message === "Success") {
+        setSubjectTitle("");
+        setSubjectDesc("");
+        setSection("");
+        setTimeout(() => {
+          setLoader({ show: false });
+          setToast({
+            show: true,
+            title: "Added Subject",
+            description: "Subject was added successfully"
+          });
+          fetchSubjects();
+        }, 500);
+      }   
+    } catch (error) {
       setTimeout(() => {
         setLoader({ show: false });
         setToast({
           show: true,
-          title: "Added Subject",
-          description: "Subject was added successfully"
+          title: "Error Encountered",
+          description: "Something went wrong while action is being done"
         });
-        fetchSubjects();
+      }, 500);
+    }
+  };
+
+  const handleOnDeleteSubject = async () => {
+    setShowDeleteSubjectModal(false);
+    setLoader({ show: true });
+    try {
+      const { data } = await deleteSubject(selectedSubject?.subjectId ?? 0);
+      if (data.status === 200 && data.message === "Success") {
+        setTimeout(() => {
+          setLoader({ show: false });
+          setToast({
+            show: true,
+            title: "Removed Subject",
+            description: "Subject was removed successfully"
+          });
+          fetchSubjects();
+        }, 500);
+      }
+    } catch (error) {
+      setTimeout(() => {
+        setLoader({ show: false });
+        setToast({
+          show: true,
+          title: "Error Encountered",
+          description: "Something went wrong while action is being done"
+        });
       }, 500);
     }
   };
@@ -252,6 +305,34 @@ export const Subjects = (): JSX.Element => {
           </div>
         </Container>
       </MainContainer>
+      <Modal show={showDeleteSubjectModal} centered onHide={() => setShowDeleteSubjectModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title className="open-sans-600">Delete Subject?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="open-sans text-[15px]">
+            Are you sure you want to remove this subject? This will also delete any assessments linked
+            to this subject / section. It cannot be undone.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="open-sans-600"
+            variant="secondary"
+            onClick={() => {
+              setShowDeleteSubjectModal(false);
+            }}>
+            Close
+          </Button>
+          <Button
+            className="open-sans-600"
+            variant="danger"
+            type="submit"
+            onClick={handleOnDeleteSubject}>
+            Delete Subject
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Modal show={showAddSubjectModal} centered onHide={() => setShowAddSubjectModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title className="open-sans-600">Add New Subject</Modal.Title>
