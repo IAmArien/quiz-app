@@ -4,7 +4,7 @@
  */
 
 import DataTable from 'react-data-table-component';
-import { Button, Container, Form, Modal } from "react-bootstrap";
+import { Button, Container, Modal } from "react-bootstrap";
 import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
@@ -12,6 +12,7 @@ import { CSSObject } from 'styled-components';
 
 type TDataTableSubjectsData = {
   id: number | string;
+  subjectId: number;
   subject: string;
   section: string;
   description: string;
@@ -20,17 +21,20 @@ type TDataTableSubjectsData = {
 export const Subjects = (): JSX.Element => {
   const navigate = useNavigate();
   const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
+  const [showAddStudentModal, setShowAddStudentModal] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState<TDataTableSubjectsData | null>(null);
   const [subjectTitle, setSubjectTitle] = useState("");
   const [section, setSection] = useState("");
   const [subjectDesc, setSubjectDesc] = useState("");
+  const [studentId, setStudentId] = useState("");
   const [data, setData] = useState<TDataTableSubjectsData[]>([]);
 
   const columns = [
     {
       name: 'Subject (Title)',
-      selector: (row: any) => row.subject,
+      selector: (row: TDataTableSubjectsData) => row.subject,
       sortable: true,
-      cell: (row: any) => (
+      cell: (row: TDataTableSubjectsData) => (
         <p className="open-sans-600 text-[15px]">
           {row.subject}
         </p>
@@ -38,9 +42,9 @@ export const Subjects = (): JSX.Element => {
     },
     {
       name: 'Section',
-      selector: (row: any) => row.section,
+      selector: (row: TDataTableSubjectsData) => row.section,
       sortable: true,
-      cell: (row: any) => (
+      cell: (row: TDataTableSubjectsData) => (
         <p className="open-sans-600 text-[15px]">
           {row.section}
         </p>
@@ -48,7 +52,7 @@ export const Subjects = (): JSX.Element => {
     },
     {
       name: 'Subject (Description)',
-      selector: (row: any) => row.description,
+      selector: (row: TDataTableSubjectsData) => row.description,
       sortable: true,
       cell: (row: any) => (
         <div className="flex flex-row gap-[12px] items-center pr-[50px]">
@@ -61,8 +65,14 @@ export const Subjects = (): JSX.Element => {
     {
       name: 'Actions',
       sortable: false,
-      cell: () => (
+      cell: (row: TDataTableSubjectsData) => (
         <div className="flex flex-row gap-[5px]">
+          <Button variant="outline-success" size="sm" onClick={() => {
+            setShowAddStudentModal(true);
+            setSelectedSubject(row);
+          }}>
+            <i className="fa-solid fa-user-plus"></i>
+          </Button>
           <Button variant="outline-danger" size="sm">
             <i className="fa-regular fa-trash-can"></i>
           </Button>
@@ -78,12 +88,14 @@ export const Subjects = (): JSX.Element => {
     setData([
       {
         id: 1,
+        subjectId: 1,
         subject: "Mathematics",
         section: "Section I",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
       },
       {
         id: 2,
+        subjectId: 2,
         subject: "English III",
         section: "Section II",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
@@ -91,9 +103,9 @@ export const Subjects = (): JSX.Element => {
     ])
   }, []);
 
-  const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-  };
+  const handleOnSubmitSubject = () => { };
+
+  const handleOnSubmitStudent = () => { };
 
   const customAction = (): JSX.Element => {
     return (
@@ -184,53 +196,101 @@ export const Subjects = (): JSX.Element => {
           </div>
         </Container>
       </MainContainer>
-      <Form onSubmit={handleOnSubmit}>
-        <Modal show={showAddSubjectModal} centered onHide={() =>  setShowAddSubjectModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title className="open-sans-600">Add New Subject</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="flex flex-col gap-[12px]">
-              <input
-                type="text"
-                name="subject"
-                className="form-control open-sans"
-                placeholder="Subject (Title)"
-                required
-                value={subjectTitle}
-                onChange={(event) => {
-                  setSubjectTitle(event.currentTarget.value);
-                }}
-              />
-              <input
-                type="text"
-                name="section"
-                className="form-control open-sans"
-                placeholder="Section (eg. Section I)"
-                required
-                value={section}
-                onChange={(event) => {
-                  setSection(event.currentTarget.value);
-                }}
-              />
-              <textarea
-                rows={4}
-                name="description"
-                className="form-control open-sans"
-                placeholder="Subject (Description)"
-                required
-                value={subjectDesc}
-                onChange={(event) => {
-                  setSubjectDesc(event.currentTarget.value)
-                }}></textarea>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button className="open-sans-600" variant="secondary" onClick={() =>  setShowAddSubjectModal(false)}>Close</Button>
-            <Button className="open-sans-600" variant="success" type="submit">Add Subject</Button>
-          </Modal.Footer>
-        </Modal>
-      </Form>
+      <Modal show={showAddSubjectModal} centered onHide={() =>  setShowAddSubjectModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title className="open-sans-600">Add New Subject</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="flex flex-col gap-[12px]">
+            <input
+              type="text"
+              name="subject"
+              className="form-control open-sans"
+              placeholder="Subject (Title)"
+              required
+              value={subjectTitle}
+              onChange={(event) => {
+                setSubjectTitle(event.currentTarget.value);
+              }}
+            />
+            <input
+              type="text"
+              name="section"
+              className="form-control open-sans"
+              placeholder="Section (eg. Section I)"
+              required
+              value={section}
+              onChange={(event) => {
+                setSection(event.currentTarget.value);
+              }}
+            />
+            <textarea
+              rows={4}
+              name="description"
+              className="form-control open-sans"
+              placeholder="Subject (Description)"
+              required
+              value={subjectDesc}
+              onChange={(event) => {
+                setSubjectDesc(event.currentTarget.value)
+              }}></textarea>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="open-sans-600"
+            variant="secondary"
+            onClick={() => setShowAddSubjectModal(false)}>
+            Close
+          </Button>
+          <Button
+            className="open-sans-600"
+            variant="success"
+            type="submit"
+            onClick={handleOnSubmitSubject}>
+            Add Subject
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showAddStudentModal} centered onHide={() =>  setShowAddStudentModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title className="open-sans-600">Add New Student</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="flex flex-col gap-[17px]">
+            <p className="open-sans">
+              Add student to this subject:&nbsp;
+              <b>{selectedSubject?.subject}</b> (<b>{selectedSubject?.section}</b>)
+            </p>
+            <input
+              type="text"
+              name="student_id"
+              className="form-control open-sans"
+              placeholder="Student ID"
+              required
+              value={studentId}
+              onChange={(event) => {
+                setStudentId(event.currentTarget.value);
+              }}
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="open-sans-600"
+            variant="secondary"
+            onClick={() => setShowAddStudentModal(false)}>
+            Close
+          </Button>
+          <Button
+            className="open-sans-600"
+            variant="success"
+            type="submit"
+            onClick={handleOnSubmitStudent}>
+            Add Student
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
