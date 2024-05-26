@@ -5,10 +5,11 @@
 
 import React from "react";
 import { PropsWithChildren } from "react";
-import { Badge, Button } from "react-bootstrap";
+import { Badge, Button, Toast } from "react-bootstrap";
 import { merge } from "../../utils";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { loader } from "../../store/LoaderStore";
+import { toast } from "../../store/ToastStore";
 
 export type TMainContainerSidebar = {
   icon: React.ReactNode;
@@ -30,6 +31,8 @@ export type TMainContainerProps = PropsWithChildren & {
 
 export const MainContainer: React.FC<TMainContainerProps> = (props): JSX.Element => {
   const getLoader = useAtomValue(loader);
+  const setToast = useSetAtom(toast);
+  const getToast = useAtomValue(toast);
   const {
     sidebar,
     profile,
@@ -105,10 +108,23 @@ export const MainContainer: React.FC<TMainContainerProps> = (props): JSX.Element
           {children}
           {getLoader.show && (
             <div className="z-[9999] absolute left-0 right-0 bottom-0 mb-[20px] flex flex-col justify-center items-center">
-              <div className="spinner-border text-light" role="status">
+              <div className="spinner-border text-success" role="status">
               </div>
             </div>
           )}
+          <div className="z-[9999] absolute left-0 right-0 bottom-0 mb-[20px] flex flex-col justify-center items-center">
+            <Toast show={getToast.show} onClose={() => setToast({
+              show: false,
+              title: "",
+              description: ""
+            })}>
+              <Toast.Header>
+                <strong className="me-auto">{getToast.title}</strong>
+                <small>Just now</small>
+              </Toast.Header>
+              <Toast.Body>{getToast.description}</Toast.Body>
+            </Toast>
+          </div>
         </div>
       </div>
     </div>

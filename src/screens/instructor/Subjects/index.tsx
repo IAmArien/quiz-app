@@ -12,6 +12,7 @@ import { CSSObject } from 'styled-components';
 import { loginSession } from '../../../store';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loader } from '../../../store/LoaderStore';
+import { toast } from '../../../store/ToastStore';
 
 type TDataTableSubjectsData = {
   id: number | string;
@@ -26,6 +27,7 @@ export const Subjects = (): JSX.Element => {
   const navigate = useNavigate();
   const getLoginSession = useAtomValue(loginSession);
   const setLoader = useSetAtom(loader);
+  const setToast = useSetAtom(toast);
   const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<TDataTableSubjectsData | null>(null);
@@ -154,6 +156,11 @@ export const Subjects = (): JSX.Element => {
 
   const handleOnSubmitSubject = () => {
     setLoader({ show: true });
+    setToast({
+      show: true,
+      title: "Added Subject",
+      description: "Subject was added successfully"
+    });
   };
 
   const handleOnSubmitStudent = () => { };
