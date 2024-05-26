@@ -25,6 +25,7 @@ export const Assessments = (): JSX.Element => {
   const [showAddAssessmentModal, setShowAddAssessmentModal] = useState(false);
   const [data, setData] = useState<TDataTableAssessmentData[]>([]);
   const [assessmentTitle, setAssessmentTitle] = useState("");
+  const [assessmentDesc, setAssessmentDesc] = useState("");
 
   const columns = [
     {
@@ -235,6 +236,16 @@ export const Assessments = (): JSX.Element => {
                 setAssessmentTitle(event.currentTarget.value);
               }}
             />
+            <textarea
+              rows={4}
+              name="description"
+              className="form-control open-sans"
+              placeholder="Assessment (Description)"
+              required
+              value={assessmentDesc}
+              onChange={(event) => {
+                setAssessmentDesc(event.currentTarget.value)
+              }}></textarea>
             <select className="form-select open-sans" name="assessment_section">
               <option value={"1-1"}>Mathematics - Section I</option>
               <option value={"3-2"}>English III - Section II</option>

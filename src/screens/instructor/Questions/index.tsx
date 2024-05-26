@@ -55,6 +55,26 @@ export const QuestionsCreate = (): JSX.Element => {
     }
   };
 
+  const isReadyToPublish = (): boolean => {
+    let ready = true;
+    questions.forEach((value: TQuestions) => {
+      if (value.question === "") {
+        ready = false;
+        return;
+      }
+      const filteredEmptyChoices = value.choices.filter((choices: TChoices) => {
+        if (choices.choice !== "") {
+          return choices.answer === false;
+        }
+        return choices.choice === "";
+      });
+      if (filteredEmptyChoices.length === value.choices.length) {
+        ready = false;
+      }
+    });
+    return ready;
+  };
+
   const addNewQuestionClick = () => {
     const newQuestion = addNewQuestion(questions[questions.length-1].questionNumber + 1);
     setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
@@ -85,11 +105,17 @@ export const QuestionsCreate = (): JSX.Element => {
         <Col lg={6} md={12} sm={12}>
           <div className="rounded-[10px] border-t-[5px] border-[#198754] py-[12px] px-[16px] bg-[#FFFFFF]">
             <h3 className="open-sans-700 text-[25px]">
+              {/* This form is no longer accepting responses */}
               English III Quiz IV
             </h3>
             <p className="open-sans text-[#8c8c8c] mt-[8px]">
               This quiz is used to test the IQ of my MF students. Passing score is 10/15
+              {/* Please contact your administrator / instructor if there are any issues regarding the status
+              of this form */}
             </p>
+            <Button disabled={!isReadyToPublish()} className="mt-[12px]" variant="outline-success" size="sm">
+              <i className="fa-solid fa-cloud-arrow-up"></i>&nbsp;&nbsp;Publish
+            </Button>
           </div>
         </Col>
         <Col lg={3}></Col>
