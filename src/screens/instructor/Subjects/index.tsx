@@ -13,6 +13,7 @@ import { loginSession } from '../../../store';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loader } from '../../../store/LoaderStore';
 import { toast } from '../../../store/ToastStore';
+import { addSubject } from '../../../services';
 
 type TDataTableSubjectsData = {
   id: number | string;
@@ -154,13 +155,27 @@ export const Subjects = (): JSX.Element => {
     ])
   }, []);
 
-  const handleOnSubmitSubject = () => {
+  const handleOnSubmitSubject = async () => {
+    setShowAddSubjectModal(false);
     setLoader({ show: true });
-    setToast({
-      show: true,
-      title: "Added Subject",
-      description: "Subject was added successfully"
-    });
+    const { data } = await addSubject(
+      subjectTitle,
+      subjectDesc,
+      section
+    );
+    if (data.status === 200 && data.message === "Success") {
+      setSubjectTitle("");
+      setSubjectDesc("");
+      setSection("");
+      setTimeout(() => {
+        setLoader({ show: false });
+        setToast({
+          show: true,
+          title: "Added Subject",
+          description: "Subject was added successfully"
+        });
+      }, 500);
+    }
   };
 
   const handleOnSubmitStudent = () => { };

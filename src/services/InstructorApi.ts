@@ -5,7 +5,7 @@
 
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import { BaseResponse, LoginResponse } from "./types";
+import { AddSubjectResponse, BaseResponse, LoginResponse } from "./types";
 
 export const login = async (email: string, password: string) => {
   const response = await axios.post<BaseResponse<LoginResponse>>(
@@ -23,3 +23,24 @@ export const login = async (email: string, password: string) => {
   );
   return response;
 };
+
+export const addSubject = async (
+  title: string,
+  description: string,
+  section: string
+) => {
+  const response = await axios.post<BaseResponse<AddSubjectResponse>>(
+    `${BASE_URL}/instructor/add_subject.php`,
+    {
+      subject: title,
+      description,
+      section
+    },
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  );
+  return response;
+}

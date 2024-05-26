@@ -113,7 +113,7 @@ export const MainContainer: React.FC<TMainContainerProps> = (props): JSX.Element
             </div>
           )}
           <div className="z-[9999] absolute left-0 right-0 bottom-0 mb-[20px] flex flex-col justify-center items-center">
-            <Toast show={getToast.show} onClose={() => setToast({
+            <Toast show={getToast.show} autohide onClose={() => setToast({
               show: false,
               title: "",
               description: ""

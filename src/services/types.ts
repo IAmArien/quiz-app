@@ -15,3 +15,11 @@ export type LoginResponse = {
   last_name: string;
   college: string;
 };
+
+export type AddSubjectResponse = {
+  id: number;
+  subject_title: string;
+  subject_description: string;
+  section: string;
+  students: string;
+};
