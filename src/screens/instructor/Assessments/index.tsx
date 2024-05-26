@@ -3,7 +3,7 @@
  * Reuse as a whole or in part is prohibited without permission.
  */
 
-import { Badge, Button, Container } from "react-bootstrap";
+import { Badge, Button, Container, Modal } from "react-bootstrap";
 import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { CSSObject } from "styled-components";
@@ -24,6 +24,7 @@ export const Assessments = (): JSX.Element => {
   const navigate = useNavigate();
   const [showAddAssessmentModal, setShowAddAssessmentModal] = useState(false);
   const [data, setData] = useState<TDataTableAssessmentData[]>([]);
+  const [assessmentTitle, setAssessmentTitle] = useState("");
 
   const columns = [
     {
@@ -86,10 +87,10 @@ export const Assessments = (): JSX.Element => {
           <Button variant="success" size="sm" onClick={() => { }}>
             <i className="fa-solid fa-eye"></i>
           </Button>
-          <Button disabled={row.status === "INACTIVE"} variant="danger" size="sm">
+          <Button disabled={row.status === "ACTIVE"} variant="danger" size="sm">
             <i className="fa-regular fa-trash-can"></i>
           </Button>
-          <Button disabled={row.status === "ACTIVE"} variant="primary" size="sm">
+          <Button variant="primary" size="sm">
             <i className="fa-regular fa-pen-to-square"></i>
           </Button>
           <Button variant="secondary" size="sm">
@@ -123,6 +124,8 @@ export const Assessments = (): JSX.Element => {
     ])
   }, []);
 
+  const handleOnSubmitAssessment = () => {};
+
   const customAction = (): JSX.Element => {
     return (
       <Button className="open-sans" variant="outline-success" size="sm" onClick={() => {
@@ -143,73 +146,114 @@ export const Assessments = (): JSX.Element => {
   };
 
   return (
-    <MainContainer
-      title="Assessments"
-      profile={{
-        name: "Norman Palisoc"
-      }}
-      sidebar={[
-        {
-          icon: <i className="fa-solid fa-gauge"></i>,
-          label: "Dashboard",
-          selected: false,
-          onClick: () => {
-            navigate("/instructor/dashboard");
+    <>
+      <MainContainer
+        title="Assessments"
+        profile={{
+          name: "Norman Palisoc"
+        }}
+        sidebar={[
+          {
+            icon: <i className="fa-solid fa-gauge"></i>,
+            label: "Dashboard",
+            selected: false,
+            onClick: () => {
+              navigate("/instructor/dashboard");
+            }
+          },
+          {
+            icon: <i className="fa-solid fa-book"></i>,
+            label: "Subjects",
+            selected: false,
+            onClick: () => {
+              navigate("/instructor/subjects");
+            }
+          },
+          {
+            icon: <i className="fa-regular fa-bars-progress"></i>,
+            label: "Assessments",
+            selected: true,
+            onClick: () => {
+              navigate("/instructor/assessments");
+            }
+          },
+          {
+            icon: <i className="fa-solid fa-circle-user"></i>,
+            label: "Profile",
+            selected: false,
+            onClick: () => {
+              navigate("/instructor/profile");
+            }
+          },
+          {
+            icon: <i className="fa-solid fa-right-from-bracket"></i>,
+            label: "Logout",
+            selected: false,
+            onClick: () => {
+              navigate("/instructor/logout");
+            }
           }
-        },
-        {
-          icon: <i className="fa-solid fa-book"></i>,
-          label: "Subjects",
-          selected: false,
-          onClick: () => {
-            navigate("/instructor/subjects");
-          }
-        },
-        {
-          icon: <i className="fa-regular fa-bars-progress"></i>,
-          label: "Assessments",
-          selected: true,
-          onClick: () => {
-            navigate("/instructor/assessments");
-          }
-        },
-        {
-          icon: <i className="fa-solid fa-circle-user"></i>,
-          label: "Profile",
-          selected: false,
-          onClick: () => {
-            navigate("/instructor/profile");
-          }
-        },
-        {
-          icon: <i className="fa-solid fa-right-from-bracket"></i>,
-          label: "Logout",
-          selected: false,
-          onClick: () => {
-            navigate("/instructor/logout");
-          }
-        }
-      ]}>
-      <Container>
-        <div className="flex flex-col pt-[20px]">
-          <DataTable
-            title="Assessments Management"
-            selectableRows={false}
-            dense={false}
-            highlightOnHover
-            pagination
-            actions={customAction()}
+        ]}>
+        <Container>
+          <div className="flex flex-col pt-[20px]">
+            <DataTable
+              title="Assessments Management"
+              selectableRows={false}
+              dense={false}
+              highlightOnHover
+              pagination
+              actions={customAction()}
+              className="open-sans-600"
+              customStyles={{
+                headCells: {
+                  style: headCellStyle
+                }
+              }}
+              columns={columns}
+              data={data}
+            />
+          </div>
+        </Container>
+      </MainContainer>
+      <Modal show={showAddAssessmentModal} centered onHide={() =>  setShowAddAssessmentModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title className="open-sans-600">Add New Assessment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="flex flex-col gap-[12px]">
+            <input
+              type="text"
+              name="assessment"
+              className="form-control open-sans"
+              placeholder="Assessment (Title)"
+              required
+              value={assessmentTitle}
+              onChange={(event) => {
+                setAssessmentTitle(event.currentTarget.value);
+              }}
+            />
+            <select className="form-select open-sans" name="assessment_section">
+              <option value={"1-1"}>Mathematics - Section I</option>
+              <option value={"3-2"}>English III - Section II</option>
+            </select>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
             className="open-sans-600"
-            customStyles={{
-              headCells: {
-                style: headCellStyle
-              }
-            }}
-            columns={columns}
-            data={data}
-          />
-        </div>
-      </Container>
-    </MainContainer>
+            variant="secondary"
+            onClick={() => setShowAddAssessmentModal(false)}>
+            Close
+          </Button>
+          <Button
+            className="open-sans-600"
+            variant="success"
+            type="submit"
+            onClick={handleOnSubmitAssessment}>
+            Add Assessment
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };
