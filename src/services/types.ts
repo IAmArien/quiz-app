@@ -56,3 +56,16 @@ export type GetAssessmentResponse = {
   result: string;
   passing: string;
 };
+
+export type AddChoicesResponse = {
+  choiceId: number;
+  choiceType: "A" | "B" | "C" | "D";
+  choice: string;
+  answer: boolean;
+}
+
+export type AddQuestionsResponse = {
+  questionNumber: number;
+  question: string;
+  choices: AddChoicesResponse[];
+};

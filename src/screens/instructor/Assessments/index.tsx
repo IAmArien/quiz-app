@@ -121,10 +121,12 @@ export const Assessments = (): JSX.Element => {
             setLoader({ show: true });
             setTimeout(() => {
               setLoader({ show: false });
-              let url = "/instructor/assessments/questions/";
-              url += row.hash + "/" + row.assessmentId;
-              url += "?title=" + row.assessmentName;
-              navigate(url);
+              setTimeout(() => {
+                let url = "/instructor/assessments/questions/";
+                url += row.hash + "/" + row.assessmentId;
+                url += "?title=" + row.assessmentName;
+                navigate(url);
+              }, 200);
             }, 500);
           }}>
             <i className="fa-regular fa-pen-to-square"></i>

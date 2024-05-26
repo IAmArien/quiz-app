@@ -4,12 +4,13 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { Badge, Button, Col, Row } from "react-bootstrap"
-import { useParams } from "react-router-dom";
-import { GetAssessmentResponse, getAssessment } from "../../../services";
-import { useSetAtom } from "jotai";
+import { Badge, Button, Col, Row, Toast } from "react-bootstrap"
+import { useNavigate, useParams } from "react-router-dom";
+import { GetAssessmentResponse, addQuestions, getAssessment } from "../../../services";
+import { useAtomValue, useSetAtom } from "jotai";
 import { toast } from "../../../store/ToastStore";
 import { loader } from "../../../store/LoaderStore";
+import { loginSession } from "../../../store";
 
 type TChoices = {
   choiceId: number;
@@ -26,10 +27,14 @@ type TQuestions = {
 
 export const QuestionsCreate = (): JSX.Element => {
   const params = useParams();
+  const navigate = useNavigate();
   const [questions, setQuestions] = useState<TQuestions[]>([]);
   const [assessment, setAssessment] = useState<GetAssessmentResponse | null>(null);
+  const getLoginSession = useAtomValue(loginSession);
   const setLoader = useSetAtom(loader);
+  const getLoader = useAtomValue(loader);
   const setToast = useSetAtom(toast);
+  const getToast = useAtomValue(toast);
 
   const addNewQuestion = (questionNumber: number): TQuestions => {
     return {
@@ -119,6 +124,38 @@ export const QuestionsCreate = (): JSX.Element => {
     }
   };
 
+  const onPublishClick = async () => {
+    setLoader({ show: true });
+    try {
+      const { data } = await addQuestions(
+        assessment?.assessment_hash ?? "",
+        assessment?.id ?? 0,
+        getLoginSession.email,
+        JSON.stringify(questions)
+      );
+      if (data.status === 200 && data.message === "Success") {
+        setTimeout(() => {
+          setLoader({ show: false });
+          setToast({
+            show: true,
+            title: "Questions Published",
+            description: "Assessment was published successfully"
+          });
+          setTimeout(() => {
+            navigate("/instructor/assessments");
+          }, 1500);
+        }, 500);
+      }
+    } catch (error) {
+      setLoader({ show: false });
+      setToast({
+        show: true,
+        title: "Error Encountered",
+        description: "Something went wrong while action is being done"
+      });
+    }
+  };
+
   useEffect(() => {
     setQuestions([addNewQuestion(1)]);
     fetchAssessment();
@@ -140,9 +177,18 @@ export const QuestionsCreate = (): JSX.Element => {
               {/* Please contact your administrator / instructor if there are any issues regarding the status
               of this form */}
             </p>
-            <Button disabled={!isReadyToPublish()} className="mt-[12px]" variant="outline-success" size="sm">
-              <i className="fa-solid fa-cloud-arrow-up"></i>&nbsp;&nbsp;Publish
-            </Button>
+            <div className="flex flex-row items-center gap-[20px] mt-[20px]">
+              <Button
+                disabled={!isReadyToPublish()}
+                variant="outline-success"
+                size="sm"
+                onClick={onPublishClick}>
+                <i className="fa-solid fa-cloud-arrow-up"></i>&nbsp;&nbsp;Publish
+              </Button>
+              {getLoader.show && (
+                <div className="spinner-border text-success" role="status"></div>
+              )}
+            </div>
           </div>
         </Col>
         <Col lg={3}></Col>
@@ -372,6 +418,19 @@ export const QuestionsCreate = (): JSX.Element => {
         </Col>
         <Col lg={3}></Col>
       </Row>
+      <div className="z-[9999] absolute left-0 right-0 bottom-0 mb-[20px] flex flex-col justify-center items-center">
+        <Toast show={getToast.show} autohide onClose={() => setToast({
+          show: false,
+          title: "",
+          description: ""
+        })}>
+          <Toast.Header>
+            <strong className="me-auto">{getToast.title}</strong>
+            <small>Just now</small>
+          </Toast.Header>
+          <Toast.Body>{getToast.description}</Toast.Body>
+        </Toast>
+      </div>
     </div>
   );
 };
