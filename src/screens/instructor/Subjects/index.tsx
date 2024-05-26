@@ -8,10 +8,12 @@ import { Button, Container, Form, Modal } from "react-bootstrap";
 import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
+import { CSSObject } from 'styled-components';
 
 type TDataTableSubjectsData = {
-  id: number;
+  id: number | string;
   subject: string;
+  section: string;
   description: string;
 }
 
@@ -19,6 +21,7 @@ export const Subjects = (): JSX.Element => {
   const navigate = useNavigate();
   const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
   const [subjectTitle, setSubjectTitle] = useState("");
+  const [section, setSection] = useState("");
   const [subjectDesc, setSubjectDesc] = useState("");
   const [data, setData] = useState<TDataTableSubjectsData[]>([]);
 
@@ -26,12 +29,34 @@ export const Subjects = (): JSX.Element => {
     {
       name: 'Subject (Title)',
       selector: (row: any) => row.subject,
-      sortable: true
+      sortable: true,
+      cell: (row: any) => (
+        <p className="open-sans-600 text-[15px]">
+          {row.subject}
+        </p>
+      )
+    },
+    {
+      name: 'Section',
+      selector: (row: any) => row.section,
+      sortable: true,
+      cell: (row: any) => (
+        <p className="open-sans-600 text-[15px]">
+          {row.section}
+        </p>
+      )
     },
     {
       name: 'Subject (Description)',
       selector: (row: any) => row.description,
-      sortable: true
+      sortable: true,
+      cell: (row: any) => (
+        <div className="flex flex-row gap-[12px] items-center pr-[50px]">
+          <p className="open-sans text-[#8c8c8c] text-[15px]">
+            {row.description}
+          </p>
+        </div>
+      )
     },
     {
       name: 'Actions',
@@ -46,7 +71,7 @@ export const Subjects = (): JSX.Element => {
           </Button>
         </div>
       )
-    },
+    }
   ];
 
   useEffect(() => {
@@ -54,11 +79,13 @@ export const Subjects = (): JSX.Element => {
       {
         id: 1,
         subject: "Mathematics",
+        section: "Section I",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
       },
       {
         id: 2,
         subject: "English III",
+        section: "Section II",
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
       }
     ])
@@ -77,6 +104,14 @@ export const Subjects = (): JSX.Element => {
         Add new subject
       </Button>
     );
+  };
+
+  const headCellStyle: CSSObject = {
+    fontSize: 15,
+    fontFamily: '"Open Sans", sans-serif',
+    fontOpticalSizing: "auto",
+    fontWeight: 700,
+    fontStyle: "normal",
   };
 
   return (
@@ -130,38 +165,22 @@ export const Subjects = (): JSX.Element => {
         ]}>
         <Container>
           <div className="flex flex-col pt-[20px]">
-            {data.length > 0 ? (
-              <>
-                <DataTable
-                  selectableRows={false}
-                  dense={false}
-                  highlightOnHover
-                  pagination
-                  actions={customAction()}
-                  className="open-sans-600"
-                  customStyles={{
-                    headCells: {
-                      style: {
-                        fontSize: 15,
-                        fontFamily: '"Open Sans", sans-serif',
-                        fontOpticalSizing: "auto",
-                        fontWeight: 700,
-                        fontStyle: "normal",
-                      }
-                    }
-                  }}
-                  columns={columns}
-                  data={data}
-                />
-              </>
-            ) : (
-              <div className="absolute left-[300px] right-0 bottom-0 top-0 flex flex-col justify-center items-center">
-                <div className="flex flex-col justify-center items-center gap-[15px]">
-                  <i className="fa-regular fa-hourglass text-[30px]"></i>
-                  <h3 className="open-sans-600">No records to display</h3>
-                </div>
-              </div>
-            )}
+            <DataTable
+              title="Subjects Management"
+              selectableRows={false}
+              dense={false}
+              highlightOnHover
+              pagination
+              actions={customAction()}
+              className="open-sans-600"
+              customStyles={{
+                headCells: {
+                  style: headCellStyle
+                }
+              }}
+              columns={columns}
+              data={data}
+            />
           </div>
         </Container>
       </MainContainer>
@@ -181,6 +200,17 @@ export const Subjects = (): JSX.Element => {
                 value={subjectTitle}
                 onChange={(event) => {
                   setSubjectTitle(event.currentTarget.value);
+                }}
+              />
+              <input
+                type="text"
+                name="section"
+                className="form-control open-sans"
+                placeholder="Section (eg. Section I)"
+                required
+                value={section}
+                onChange={(event) => {
+                  setSection(event.currentTarget.value);
                 }}
               />
               <textarea
