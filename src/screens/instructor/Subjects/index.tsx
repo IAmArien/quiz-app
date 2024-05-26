@@ -168,7 +168,7 @@ export const Subjects = (): JSX.Element => {
           });
           fetchSubjects();
         }, 500);
-      }   
+      }
     } catch (error) {
       setTimeout(() => {
         setLoader({ show: false });

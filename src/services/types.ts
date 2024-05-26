@@ -31,3 +31,15 @@ export type GetSubjectResponse = {
   section: string;
   students: string;
 };
+
+export type AddAssessmentResponse = {
+  id: number;
+  subject_id: number;
+  assessment_title: string;
+  assessment_description: string;
+  assessment_status: string;
+  subject_title: string;
+  subject_section: string;
+  result: string;
+  passing: string;
+};

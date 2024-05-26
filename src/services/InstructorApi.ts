@@ -5,7 +5,7 @@
 
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import { AddSubjectResponse, BaseResponse, GetSubjectResponse, LoginResponse } from "./types";
+import { AddAssessmentResponse, AddSubjectResponse, BaseResponse, GetSubjectResponse, LoginResponse } from "./types";
 
 export const login = async (email: string, password: string) => {
   const response = await axios.post<BaseResponse<LoginResponse>>(
@@ -64,6 +64,29 @@ export const deleteSubject = async (subjectId: number) => {
     `${BASE_URL}/instructor/delete_subject.php`,
     {
       subject_id: subjectId
+    },
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  );
+  return response;
+};
+
+export const addAssessment = async (
+  title: string,
+  description: string,
+  subjectId: number,
+  email: string
+) => {
+  const response = await axios.post<BaseResponse<AddAssessmentResponse>>(
+    `${BASE_URL}/instructor/add_assessments.php`,
+    {
+      assessment: title,
+      description,
+      subject_id: subjectId,
+      instructor_email: email
     },
     {
       headers: {
