@@ -48,7 +48,7 @@ function App() {
       element: <InstructorAssessments />
     },
     {
-      path: "/instructor/assessments/questions/:assessmentHash",
+      path: "/instructor/assessments/questions/:assessmentHash/:id",
       element: <InstructorQuestions />
     }
   ]);

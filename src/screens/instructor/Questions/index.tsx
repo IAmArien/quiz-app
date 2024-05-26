@@ -5,6 +5,11 @@
 
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Col, Row } from "react-bootstrap"
+import { useParams } from "react-router-dom";
+import { GetAssessmentResponse, getAssessment } from "../../../services";
+import { useSetAtom } from "jotai";
+import { toast } from "../../../store/ToastStore";
+import { loader } from "../../../store/LoaderStore";
 
 type TChoices = {
   choiceId: number;
@@ -20,7 +25,11 @@ type TQuestions = {
 };
 
 export const QuestionsCreate = (): JSX.Element => {
+  const params = useParams();
   const [questions, setQuestions] = useState<TQuestions[]>([]);
+  const [assessment, setAssessment] = useState<GetAssessmentResponse | null>(null);
+  const setLoader = useSetAtom(loader);
+  const setToast = useSetAtom(toast);
 
   const addNewQuestion = (questionNumber: number): TQuestions => {
     return {
@@ -94,8 +103,25 @@ export const QuestionsCreate = (): JSX.Element => {
     setQuestions(newQuestions);
   };
 
+  const fetchAssessment = async () => {
+    try {
+      const { data } = await getAssessment(Number(params["id"]));
+      if (data.status === 200 && data.message === "Success") {
+        const assessment = data.data[0];
+        setAssessment(assessment);
+      }
+    } catch (error) {
+      setToast({
+        show: true,
+        title: "Error Encountered",
+        description: "Something went wrong while action is being done"
+      });
+    }
+  };
+
   useEffect(() => {
     setQuestions([addNewQuestion(1)]);
+    fetchAssessment();
   }, []);
 
   return (
@@ -106,10 +132,11 @@ export const QuestionsCreate = (): JSX.Element => {
           <div className="rounded-[10px] border-t-[5px] border-[#198754] py-[12px] px-[16px] bg-[#FFFFFF]">
             <h3 className="open-sans-700 text-[25px]">
               {/* This form is no longer accepting responses */}
-              English III Quiz IV
+              {assessment?.assessment_title}
             </h3>
             <p className="open-sans text-[#8c8c8c] mt-[8px]">
-              This quiz is used to test the IQ of my MF students. Passing score is 10/15
+              {assessment?.assessment_description}
+              {/* This quiz is used to test the IQ of my MF students. Passing score is 10/15 */}
               {/* Please contact your administrator / instructor if there are any issues regarding the status
               of this form */}
             </p>

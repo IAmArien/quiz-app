@@ -108,3 +108,15 @@ export const getAssessments = async (email: string) => {
   );
   return response;
 };
+
+export const getAssessment = async (assessmentId: number) => {
+  const response = await axios.get<BaseResponse<GetAssessmentResponse[]>>(
+    `${BASE_URL}/instructor/get_assessment.php`,
+    {
+      params: {
+        assessment_id: assessmentId
+      }
+    }
+  );
+  return response;
+};

@@ -122,9 +122,8 @@ export const Assessments = (): JSX.Element => {
             setTimeout(() => {
               setLoader({ show: false });
               let url = "/instructor/assessments/questions/";
-              url += row.hash;
-              url += "id?=" + row.assessmentId + "&";
-              url += "title=" + row.assessmentName;
+              url += row.hash + "/" + row.assessmentId;
+              url += "?title=" + row.assessmentName;
               navigate(url);
             }, 500);
           }}>
