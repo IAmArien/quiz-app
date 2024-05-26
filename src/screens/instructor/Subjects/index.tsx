@@ -67,16 +67,16 @@ export const Subjects = (): JSX.Element => {
       sortable: false,
       cell: (row: TDataTableSubjectsData) => (
         <div className="flex flex-row gap-[5px]">
-          <Button variant="outline-success" size="sm" onClick={() => {
+          <Button variant="success" size="sm" onClick={() => {
             setShowAddStudentModal(true);
             setSelectedSubject(row);
           }}>
             <i className="fa-solid fa-user-plus"></i>
           </Button>
-          <Button variant="outline-danger" size="sm">
+          <Button variant="danger" size="sm">
             <i className="fa-regular fa-trash-can"></i>
           </Button>
-          <Button variant="outline-primary" size="sm">
+          <Button variant="primary" size="sm">
             <i className="fa-regular fa-pen-to-square"></i>
           </Button>
         </div>
@@ -113,7 +113,7 @@ export const Subjects = (): JSX.Element => {
         setShowAddSubjectModal(true);
       }}>
         <i className="fa-solid fa-plus"></i>&nbsp;&nbsp;
-        Add new subject
+        Add New Subject
       </Button>
     );
   };

@@ -3,12 +3,145 @@
  * Reuse as a whole or in part is prohibited without permission.
  */
 
-import { Container } from "react-bootstrap";
+import { Badge, Button, Container } from "react-bootstrap";
 import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
+import { CSSObject } from "styled-components";
+import DataTable from "react-data-table-component";
+import { useEffect, useState } from "react";
+
+type TDataTableAssessmentData = {
+  id: number | string;
+  assessmentId: number;
+  assessmentName: string;
+  section: string;
+  status: "ACTIVE" | "INACTIVE";
+  result: string;
+  passing: string;
+}
 
 export const Assessments = (): JSX.Element => {
   const navigate = useNavigate();
+  const [showAddAssessmentModal, setShowAddAssessmentModal] = useState(false);
+  const [data, setData] = useState<TDataTableAssessmentData[]>([]);
+
+  const columns = [
+    {
+      name: 'Assessment',
+      selector: (row: TDataTableAssessmentData) => row.assessmentName,
+      sortable: true,
+      cell: (row: TDataTableAssessmentData) => (
+        <p className="open-sans-600 text-[15px]">
+          {row.assessmentName}
+        </p>
+      )
+    },
+    {
+      name: 'Section',
+      selector: (row: TDataTableAssessmentData) => row.section,
+      sortable: true,
+      cell: (row: TDataTableAssessmentData) => (
+        <p className="open-sans text-[15px]">
+          {row.section}
+        </p>
+      )
+    },
+    {
+      name: 'Status',
+      selector: (row: TDataTableAssessmentData) => row.status,
+      sortable: true,
+      cell: (row: TDataTableAssessmentData) => (
+        <p className="open-sans-600 text-[15px]">
+          <Badge bg={row.status === "ACTIVE" ? "success" : "secondary"}>
+            {row.status}
+          </Badge>
+        </p>
+      )
+    },
+    {
+      name: 'Result',
+      selector: (row: TDataTableAssessmentData) => row.result,
+      sortable: true,
+      cell: (row: TDataTableAssessmentData) => (
+        <p className="open-sans text-[15px]">
+          {row.result}
+        </p>
+      )
+    },
+    {
+      name: 'Passing',
+      selector: (row: TDataTableAssessmentData) => row.passing,
+      sortable: true,
+      cell: (row: TDataTableAssessmentData) => (
+        <p className="open-sans text-[15px]">
+          {row.passing}
+        </p>
+      )
+    },
+    {
+      name: 'Actions',
+      sortable: false,
+      cell: (row: TDataTableAssessmentData) => (
+        <div className="flex flex-row gap-[5px]">
+          <Button variant="success" size="sm" onClick={() => { }}>
+            <i className="fa-solid fa-eye"></i>
+          </Button>
+          <Button disabled={row.status === "INACTIVE"} variant="danger" size="sm">
+            <i className="fa-regular fa-trash-can"></i>
+          </Button>
+          <Button disabled={row.status === "ACTIVE"} variant="primary" size="sm">
+            <i className="fa-regular fa-pen-to-square"></i>
+          </Button>
+          <Button variant="secondary" size="sm">
+            <i className="fa-solid fa-file-export"></i>
+          </Button>
+        </div>
+      )
+    }
+  ]
+
+  useEffect(() => {
+    setData([
+      {
+        id: 1,
+        assessmentId: 1,
+        assessmentName: "Mathematics Quiz I",
+        section: "Mathematics - Section I",
+        status: "ACTIVE",
+        result: "23 / 25 Taken the quiz",
+        passing: "59% PASSED"
+      },
+      {
+        id: 2,
+        assessmentId: 2,
+        assessmentName: "English III Quiz IV",
+        section: "English III - Section II",
+        status: "INACTIVE",
+        result: "23 / 25 Taken the quiz",
+        passing: "40% PASSED"
+      },
+    ])
+  }, []);
+
+  const customAction = (): JSX.Element => {
+    return (
+      <Button className="open-sans" variant="outline-success" size="sm" onClick={() => {
+        setShowAddAssessmentModal(true);
+      }}>
+        <i className="fa-solid fa-plus"></i>&nbsp;&nbsp;
+        Add New Assessment
+      </Button>
+    );
+  };
+
+  const headCellStyle: CSSObject = {
+    fontSize: 15,
+    fontFamily: '"Open Sans", sans-serif',
+    fontOpticalSizing: "auto",
+    fontWeight: 700,
+    fontStyle: "normal",
+  };
+
   return (
     <MainContainer
       title="Assessments"
@@ -58,7 +191,24 @@ export const Assessments = (): JSX.Element => {
         }
       ]}>
       <Container>
-        <div></div>
+        <div className="flex flex-col pt-[20px]">
+          <DataTable
+            title="Assessments Management"
+            selectableRows={false}
+            dense={false}
+            highlightOnHover
+            pagination
+            actions={customAction()}
+            className="open-sans-600"
+            customStyles={{
+              headCells: {
+                style: headCellStyle
+              }
+            }}
+            columns={columns}
+            data={data}
+          />
+        </div>
       </Container>
     </MainContainer>
   );
