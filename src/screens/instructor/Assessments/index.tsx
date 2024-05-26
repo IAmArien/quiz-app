@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { CSSObject } from "styled-components";
 import DataTable from "react-data-table-component";
 import { useEffect, useState } from "react";
+import { loginSession } from "../../../store";
+import { useAtomValue } from "jotai";
 
 type TDataTableAssessmentData = {
   id: number | string;
@@ -22,10 +24,13 @@ type TDataTableAssessmentData = {
 
 export const Assessments = (): JSX.Element => {
   const navigate = useNavigate();
+  const getLoginSession = useAtomValue(loginSession);
   const [showAddAssessmentModal, setShowAddAssessmentModal] = useState(false);
   const [data, setData] = useState<TDataTableAssessmentData[]>([]);
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentDesc, setAssessmentDesc] = useState("");
+
+  const name = `${getLoginSession.first_name} ${getLoginSession.last_name}`;
 
   const columns = [
     {
@@ -150,9 +155,7 @@ export const Assessments = (): JSX.Element => {
     <>
       <MainContainer
         title="Assessments"
-        profile={{
-          name: "Norman Palisoc"
-        }}
+        profile={{ name }}
         sidebar={[
           {
             icon: <i className="fa-solid fa-gauge"></i>,

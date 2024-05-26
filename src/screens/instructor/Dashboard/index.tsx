@@ -6,15 +6,17 @@
 import { Container } from "react-bootstrap";
 import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
+import { useAtomValue } from "jotai";
+import { loginSession } from "../../../store";
 
 export const Dashboard = (): JSX.Element => {
   const navigate = useNavigate();
+  const getLoginSession = useAtomValue(loginSession);
+  const name = `${getLoginSession.first_name} ${getLoginSession.last_name}`;
   return (
     <MainContainer
       title="Dashboard"
-      profile={{
-        name: "Norman Palisoc"
-      }}
+      profile={{ name }}
       sidebar={[
         {
           icon: <i className="fa-solid fa-gauge"></i>,
@@ -27,6 +29,7 @@ export const Dashboard = (): JSX.Element => {
         {
           icon: <i className="fa-solid fa-book"></i>,
           label: "Subjects",
+          count: 6,
           selected: false,
           onClick: () => {
             navigate("/instructor/subjects");
@@ -35,6 +38,7 @@ export const Dashboard = (): JSX.Element => {
         {
           icon: <i className="fa-regular fa-bars-progress"></i>,
           label: "Assessments",
+          count: 2,
           selected: false,
           onClick: () => {
             navigate("/instructor/assessments");

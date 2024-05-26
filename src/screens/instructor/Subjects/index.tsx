@@ -9,6 +9,8 @@ import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { CSSObject } from 'styled-components';
+import { loginSession } from '../../../store';
+import { useAtomValue } from 'jotai';
 
 type TDataTableSubjectsData = {
   id: number | string;
@@ -21,6 +23,7 @@ type TDataTableSubjectsData = {
 
 export const Subjects = (): JSX.Element => {
   const navigate = useNavigate();
+  const getLoginSession = useAtomValue(loginSession);
   const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<TDataTableSubjectsData | null>(null);
@@ -29,6 +32,8 @@ export const Subjects = (): JSX.Element => {
   const [subjectDesc, setSubjectDesc] = useState("");
   const [studentId, setStudentId] = useState("");
   const [data, setData] = useState<TDataTableSubjectsData[]>([]);
+
+  const name = `${getLoginSession.first_name} ${getLoginSession.last_name}`;
 
   const columns = [
     {
@@ -172,9 +177,7 @@ export const Subjects = (): JSX.Element => {
     <>
       <MainContainer
         title="Subjects"
-        profile={{
-          name: "Norman Palisoc"
-        }}
+        profile={{ name }}
         sidebar={[
           {
             icon: <i className="fa-solid fa-gauge"></i>,

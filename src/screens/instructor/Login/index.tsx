@@ -6,16 +6,36 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { merge } from "../../../utils";
+import { login } from "../../../services";
+import { useNavigate } from "react-router-dom";
+import { useSetAtom } from "jotai";
+import { loginSession } from "../../../store";
 
 export const Login = (): JSX.Element => {
-
+  const navigate = useNavigate();
+  const setLoginSession = useSetAtom(loginSession);
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
 
   const [isError, setIsError] = useState(false);
 
-  const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const { data } =  await login(emailAddress, password);
+    if (data.status === 200 && data.message === "Success") {
+      setLoginSession({
+        login: true,
+        email: data.data.email,
+        first_name: data.data.first_name,
+        last_name: data.data.last_name,
+        college: data.data.college
+      })
+      navigate("/instructor/dashboard");
+    } else {
+      setEmailAddress("");
+      setPassword("");
+      setIsError(true);
+    }
   };
 
   return (
