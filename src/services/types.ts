@@ -43,3 +43,15 @@ export type AddAssessmentResponse = {
   result: string;
   passing: string;
 };
+
+export type GetAssessmentResponse = {
+  id: number;
+  subject_id: number;
+  assessment_title: string;
+  assessment_description: string;
+  assessment_status: "ACTIVE" | "INACTIVE";
+  subject_title: string;
+  subject_section: string;
+  result: string;
+  passing: string;
+};

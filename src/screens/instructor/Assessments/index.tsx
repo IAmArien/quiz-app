@@ -13,7 +13,7 @@ import { loginSession } from "../../../store";
 import { useAtomValue, useSetAtom } from "jotai";
 import { loader } from "../../../store/LoaderStore";
 import { toast } from "../../../store/ToastStore";
-import { GetSubjectResponse, addAssessment, getSubjects } from "../../../services";
+import { GetAssessmentResponse, GetSubjectResponse, addAssessment, getAssessments, getSubjects } from "../../../services";
 
 type TDataTableAssessmentData = {
   id: number | string;
@@ -145,27 +145,34 @@ export const Assessments = (): JSX.Element => {
     }
   };
 
+  const fetchAssessments = async () => {
+    try {
+      const { data } = await getAssessments(getLoginSession.email);
+      if (data.status === 200 && data.message === "Success") {
+        const assessments: TDataTableAssessmentData[] = data.data.map((value: GetAssessmentResponse, index: number) => {
+          return {
+            id: index,
+            assessmentId: value.id,
+            assessmentName: value.assessment_title,
+            section: `${value.subject_title} - ${value.subject_section}`,
+            status: value.assessment_status,
+            result: value.result,
+            passing: value.passing
+          }
+        });
+        setData(assessments);
+      }
+    } catch (error) {
+      setToast({
+        show: true,
+        title: "Error Encountered",
+        description: "Something went wrong while action is being done"
+      });
+    }
+  };
+
   useEffect(() => {
-    setData([
-      {
-        id: 1,
-        assessmentId: 1,
-        assessmentName: "Mathematics Quiz I",
-        section: "Mathematics - Section I",
-        status: "ACTIVE",
-        result: "23 / 25 Taken the quiz",
-        passing: "59% PASSED"
-      },
-      {
-        id: 2,
-        assessmentId: 2,
-        assessmentName: "English III Quiz IV",
-        section: "English III - Section II",
-        status: "INACTIVE",
-        result: "23 / 25 Taken the quiz",
-        passing: "40% PASSED"
-      },
-    ]);
+    fetchAssessments();
     fetchSubjects();
   }, []);
 
@@ -189,6 +196,7 @@ export const Assessments = (): JSX.Element => {
             title: "Added Assessment",
             description: "Assessment was added successfully"
           });
+          fetchAssessments();
         }, 500);
       }   
     } catch (error) {
