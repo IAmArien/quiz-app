@@ -50,6 +50,7 @@ export type GetAssessmentResponse = {
   assessment_title: string;
   assessment_description: string;
   assessment_status: "ACTIVE" | "INACTIVE";
+  assessment_hash: string;
   subject_title: string;
   subject_section: string;
   result: string;

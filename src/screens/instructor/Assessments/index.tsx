@@ -21,6 +21,7 @@ type TDataTableAssessmentData = {
   assessmentName: string;
   section: string;
   status: "ACTIVE" | "INACTIVE";
+  hash: string;
   result: string;
   passing: string;
 }
@@ -39,6 +40,7 @@ export const Assessments = (): JSX.Element => {
   const setToast = useSetAtom(toast);
   const [showAddAssessmentModal, setShowAddAssessmentModal] = useState(false);
   const [data, setData] = useState<TDataTableAssessmentData[]>([]);
+  const [selectedAssessment, setSelectedAssessment] = useState<TDataTableAssessmentData | null>(null);
   const [subjectList, setSubjectList] = useState<TSubjectListSelection[]>([]);
   const [selectedSubjectId, setSelectedSubjectId] = useState(0);
   const [assessmentTitle, setAssessmentTitle] = useState("");
@@ -104,16 +106,33 @@ export const Assessments = (): JSX.Element => {
       sortable: false,
       cell: (row: TDataTableAssessmentData) => (
         <div className="flex flex-row gap-[5px]">
-          <Button variant="success" size="sm" onClick={() => { }}>
+          <Button variant="success" size="sm" onClick={() => {
+            setSelectedAssessment(row);
+          }}>
             <i className="fa-solid fa-eye"></i>
           </Button>
-          <Button disabled={row.status === "ACTIVE"} variant="danger" size="sm">
+          <Button disabled={row.status === "ACTIVE"} variant="danger" size="sm" onClick={() => {
+            setSelectedAssessment(row);
+          }}>
             <i className="fa-regular fa-trash-can"></i>
           </Button>
-          <Button variant="primary" size="sm">
+          <Button variant="primary" size="sm" onClick={() => {
+            setSelectedAssessment(row);
+            setLoader({ show: true });
+            setTimeout(() => {
+              setLoader({ show: false });
+              let url = "/instructor/assessments/questions/";
+              url += row.hash;
+              url += "id?=" + row.assessmentId + "&";
+              url += "title=" + row.assessmentName;
+              navigate(url);
+            }, 500);
+          }}>
             <i className="fa-regular fa-pen-to-square"></i>
           </Button>
-          <Button variant="secondary" size="sm">
+          <Button variant="secondary" size="sm" onClick={() => {
+            setSelectedAssessment(row);
+          }}>
             <i className="fa-solid fa-file-export"></i>
           </Button>
         </div>
@@ -156,6 +175,7 @@ export const Assessments = (): JSX.Element => {
             assessmentName: value.assessment_title,
             section: `${value.subject_title} - ${value.subject_section}`,
             status: value.assessment_status,
+            hash: value.assessment_hash,
             result: value.result,
             passing: value.passing
           }
@@ -228,6 +248,10 @@ export const Assessments = (): JSX.Element => {
     fontOpticalSizing: "auto",
     fontWeight: 700,
     fontStyle: "normal",
+  };
+
+  const isAddAssessmentEnabled = (): boolean => {
+    return assessmentTitle !== "" && assessmentDesc !== "" && selectedSubjectId !== 0;
   };
 
   return (
@@ -353,6 +377,7 @@ export const Assessments = (): JSX.Element => {
             Close
           </Button>
           <Button
+            disabled={!isAddAssessmentEnabled()}
             className="open-sans-600"
             variant="success"
             type="submit"
