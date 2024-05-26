@@ -413,7 +413,7 @@ export const Assessments = (): JSX.Element => {
             <input
               type="text"
               name="assessment_link"
-              className="form-control open-sans"
+              className="form-control open-sans-600 text-[#0d6efd]"
               placeholder="Assessment Link"
               required
               value={assessmentLink}
