@@ -188,6 +188,7 @@ export const Subjects = (): JSX.Element => {
             icon: <i className="fa-solid fa-book"></i>,
             label: "Subjects",
             selected: true,
+            count: 6,
             onClick: () => {
               navigate("/instructor/subjects");
             }
@@ -196,6 +197,7 @@ export const Subjects = (): JSX.Element => {
             icon: <i className="fa-regular fa-bars-progress"></i>,
             label: "Assessments",
             selected: false,
+            count: 2,
             onClick: () => {
               navigate("/instructor/assessments");
             }
@@ -221,6 +223,7 @@ export const Subjects = (): JSX.Element => {
           <div className="flex flex-col pt-[20px]">
             <DataTable
               title="Subjects Management"
+              striped
               selectableRows={false}
               dense={false}
               highlightOnHover

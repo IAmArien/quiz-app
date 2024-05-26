@@ -5,13 +5,14 @@
 
 import React from "react";
 import { PropsWithChildren } from "react";
-import { Button } from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
 import { merge } from "../../utils";
 
 export type TMainContainerSidebar = {
   icon: React.ReactNode;
   label: string;
   selected: boolean;
+  count?: number;
   onClick: () => void;
 };
 
@@ -53,8 +54,13 @@ export const MainContainer: React.FC<TMainContainerProps> = (props): JSX.Element
                       }
                     )}
                     onClick={() => value.onClick()}>
-                    {value.icon}
-                    {value.label}
+                    <div className="flex-1 flex flex-row items-center gap-[12px]">
+                      {value.icon}
+                      {value.label}
+                    </div>
+                    {value.count && (
+                      <Badge>{value.count}</Badge>
+                    )}
                   </Button>
                 </React.Fragment>
               )
