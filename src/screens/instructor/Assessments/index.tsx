@@ -131,7 +131,7 @@ export const Assessments = (): JSX.Element => {
       <Button className="open-sans" variant="outline-success" size="sm" onClick={() => {
         setShowAddAssessmentModal(true);
       }}>
-        <i className="fa-solid fa-plus"></i>&nbsp;&nbsp;
+        <i className="fa-solid fa-circle-plus"></i>&nbsp;&nbsp;
         Add New Assessment
       </Button>
     );

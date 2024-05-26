@@ -16,6 +16,7 @@ type TDataTableSubjectsData = {
   subject: string;
   section: string;
   description: string;
+  students: string;
 }
 
 export const Subjects = (): JSX.Element => {
@@ -63,6 +64,18 @@ export const Subjects = (): JSX.Element => {
       )
     },
     {
+      name: 'Students',
+      selector: (row: TDataTableSubjectsData) => row.students,
+      sortable: true,
+      cell: (row: any) => (
+        <div className="flex flex-row gap-[12px] items-center pr-[50px]">
+          <p className="open-sans text-[15px]">
+            {row.students}
+          </p>
+        </div>
+      )
+    },
+    {
       name: 'Actions',
       sortable: false,
       cell: (row: TDataTableSubjectsData) => (
@@ -79,6 +92,9 @@ export const Subjects = (): JSX.Element => {
           <Button variant="primary" size="sm">
             <i className="fa-regular fa-pen-to-square"></i>
           </Button>
+          <Button variant="secondary" size="sm" onClick={() => { }}>
+            <i className="fa-solid fa-eye"></i>
+          </Button>
         </div>
       )
     }
@@ -91,14 +107,40 @@ export const Subjects = (): JSX.Element => {
         subjectId: 1,
         subject: "Mathematics",
         section: "Section I",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+        description: "Mathematics subject with 3 sections",
+        students: "10 Students"
       },
       {
         id: 2,
         subjectId: 2,
+        subject: "Mathematics",
+        section: "Section II",
+        description: "Mathematics subject with 3 sections",
+        students: "5 Students"
+      },
+      {
+        id: 3,
+        subjectId: 3,
+        subject: "Mathematics",
+        section: "Section III",
+        description: "Mathematics subject with 3 sections",
+        students: "12 Students"
+      },
+      {
+        id: 4,
+        subjectId: 4,
+        subject: "English III",
+        section: "Section I",
+        description: "English (III) subject with 2 sections",
+        students: "0 Students"
+      },
+      {
+        id: 5,
+        subjectId: 5,
         subject: "English III",
         section: "Section II",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+        description: "English (III) subject with 2 sections",
+        students: "0 Students"
       }
     ])
   }, []);
@@ -112,7 +154,7 @@ export const Subjects = (): JSX.Element => {
       <Button className="open-sans" variant="outline-success" size="sm" onClick={() => {
         setShowAddSubjectModal(true);
       }}>
-        <i className="fa-solid fa-plus"></i>&nbsp;&nbsp;
+        <i className="fa-solid fa-circle-plus"></i>&nbsp;&nbsp;
         Add New Subject
       </Button>
     );
