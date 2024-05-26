@@ -10,6 +10,7 @@ import {
   Dashboard as InstructorDashboard,
   Login as InstructorLogin,
   Profile as InstructorProfile,
+  QuestionsCreate as InstructorQuestions,
   Register as InstructorRegister,
   Subjects as InstructorSubjects,
   Root
@@ -45,6 +46,10 @@ function App() {
     {
       path: "/instructor/assessments",
       element: <InstructorAssessments />
+    },
+    {
+      path: "/instructor/assessments/questions",
+      element: <InstructorQuestions />
     }
   ]);
 

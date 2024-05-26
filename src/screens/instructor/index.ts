@@ -9,3 +9,4 @@ export * from './Dashboard';
 export * from './Subjects';
 export * from './Assessments';
 export * from './Profile';
+export * from './Questions';
