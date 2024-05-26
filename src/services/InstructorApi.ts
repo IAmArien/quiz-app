@@ -5,7 +5,7 @@
 
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import { AddAssessmentResponse, AddQuestionsResponse, AddSubjectResponse, BaseResponse, GetAssessmentResponse, GetSubjectResponse, LoginResponse } from "./types";
+import { AddAssessmentResponse, AddQuestionsResponse, AddSubjectResponse, BaseResponse, GetAssessmentResponse, GetQuestionsResponse, GetSubjectResponse, LoginResponse } from "./types";
 
 export const login = async (email: string, password: string) => {
   const response = await axios.post<BaseResponse<LoginResponse>>(
@@ -138,6 +138,19 @@ export const addQuestions = async (
     {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  );
+  return response;
+};
+
+export const getQuestions = async (assessmentId: number, email: string) => {
+  const response = await axios.get<BaseResponse<GetQuestionsResponse[]>>(
+    `${BASE_URL}/instructor/get_questions.php`,
+    {
+      params: {
+        assessment_id: assessmentId,
+        instructor_email: email
       }
     }
   );

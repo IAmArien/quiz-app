@@ -69,3 +69,16 @@ export type AddQuestionsResponse = {
   question: string;
   choices: AddChoicesResponse[];
 };
+
+export type GetChoicesResponse = {
+  choiceId: string;
+  choiceType: "A" | "B" | "C" | "D";
+  choice: string;
+  answer: string;
+}
+
+export type GetQuestionsResponse = {
+  question_number: string;
+  question: string;
+  choices: GetChoicesResponse[];
+};

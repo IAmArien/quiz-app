@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Col, Row, Toast } from "react-bootstrap"
 import { useNavigate, useParams } from "react-router-dom";
-import { GetAssessmentResponse, addQuestions, getAssessment } from "../../../services";
+import { GetAssessmentResponse, GetChoicesResponse, GetQuestionsResponse, addQuestions, getAssessment, getQuestions } from "../../../services";
 import { useAtomValue, useSetAtom } from "jotai";
 import { toast } from "../../../store/ToastStore";
 import { loader } from "../../../store/LoaderStore";
@@ -124,6 +124,42 @@ export const QuestionsCreate = (): JSX.Element => {
     }
   };
 
+  const fetchQuestions = async () => {
+    try {
+      const { data } = await getQuestions(
+        Number(params["id"]),
+        getLoginSession.email
+      );
+      if (data.status === 200 && data.message == "Success") {
+        const remoteQuestions = data.data.map((value: GetQuestionsResponse) => {
+          return {
+            questionNumber: Number(value.question_number),
+            question: value.question,
+            choices: value.choices.map((choices: GetChoicesResponse) => {
+              return {
+                choiceId: Number(choices.choiceId),
+                choiceType: choices.choiceType,
+                choice: choices.choice,
+                answer: choices.answer === "true"
+              }
+            })
+          }
+        });
+        setQuestions(remoteQuestions);
+        if (remoteQuestions.length === 0) {
+          setQuestions([addNewQuestion(1)]);
+        }
+      }
+    } catch (error) {
+      setQuestions([addNewQuestion(1)]);
+      setToast({
+        show: true,
+        title: "Error Encountered",
+        description: "Something went wrong while action is being done"
+      });
+    }
+  };
+
   const onPublishClick = async () => {
     setLoader({ show: true });
     try {
@@ -157,8 +193,8 @@ export const QuestionsCreate = (): JSX.Element => {
   };
 
   useEffect(() => {
-    setQuestions([addNewQuestion(1)]);
     fetchAssessment();
+    fetchQuestions();
   }, []);
 
   return (
