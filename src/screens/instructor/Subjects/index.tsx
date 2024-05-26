@@ -10,7 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { CSSObject } from 'styled-components';
 import { loginSession } from '../../../store';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { loader } from '../../../store/LoaderStore';
 
 type TDataTableSubjectsData = {
   id: number | string;
@@ -24,6 +25,7 @@ type TDataTableSubjectsData = {
 export const Subjects = (): JSX.Element => {
   const navigate = useNavigate();
   const getLoginSession = useAtomValue(loginSession);
+  const setLoader = useSetAtom(loader);
   const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<TDataTableSubjectsData | null>(null);
@@ -150,7 +152,9 @@ export const Subjects = (): JSX.Element => {
     ])
   }, []);
 
-  const handleOnSubmitSubject = () => { };
+  const handleOnSubmitSubject = () => {
+    setLoader({ show: true });
+  };
 
   const handleOnSubmitStudent = () => { };
 
@@ -244,7 +248,7 @@ export const Subjects = (): JSX.Element => {
           </div>
         </Container>
       </MainContainer>
-      <Modal show={showAddSubjectModal} centered onHide={() =>  setShowAddSubjectModal(false)}>
+      <Modal show={showAddSubjectModal} centered onHide={() => setShowAddSubjectModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title className="open-sans-600">Add New Subject</Modal.Title>
         </Modal.Header>
@@ -300,7 +304,7 @@ export const Subjects = (): JSX.Element => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <Modal show={showAddStudentModal} centered onHide={() =>  setShowAddStudentModal(false)}>
+      <Modal show={showAddStudentModal} centered onHide={() => setShowAddStudentModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title className="open-sans-600">Add New Student</Modal.Title>
         </Modal.Header>

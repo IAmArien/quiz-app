@@ -7,6 +7,8 @@ import React from "react";
 import { PropsWithChildren } from "react";
 import { Badge, Button } from "react-bootstrap";
 import { merge } from "../../utils";
+import { useAtomValue } from "jotai";
+import { loader } from "../../store/LoaderStore";
 
 export type TMainContainerSidebar = {
   icon: React.ReactNode;
@@ -27,6 +29,7 @@ export type TMainContainerProps = PropsWithChildren & {
 };
 
 export const MainContainer: React.FC<TMainContainerProps> = (props): JSX.Element => {
+  const getLoader = useAtomValue(loader);
   const {
     sidebar,
     profile,
@@ -100,6 +103,12 @@ export const MainContainer: React.FC<TMainContainerProps> = (props): JSX.Element
         </nav>
         <div className="pl-[20px]">
           {children}
+          {getLoader.show && (
+            <div className="z-[9999] absolute left-0 right-0 bottom-0 mb-[20px] flex flex-col justify-center items-center">
+              <div className="spinner-border text-light" role="status">
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
