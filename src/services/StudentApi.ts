@@ -4,8 +4,25 @@
  */
 
 import axios from "axios";
-import { BaseResponse, RegisterResponse } from "./types";
+import { BaseResponse, LoginResponse, RegisterResponse } from "./types";
 import { BASE_URL } from "../utils/constants";
+
+export const login = async (email: string, password: string) => {
+  const response = await axios.post<BaseResponse<LoginResponse>>(
+    `${BASE_URL}/students/login.php`,
+    {
+      email,
+      password,
+      type: "student",
+    },
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  );
+  return response;
+};
 
 export const register = async (
   firstName: string,

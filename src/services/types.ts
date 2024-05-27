@@ -19,6 +19,7 @@ export type RegisterResponse = {
 
 export type LoginResponse = {
   email: string;
+  student_id?: string;
   first_name: string;
   last_name: string;
   college: string;
