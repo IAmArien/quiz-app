@@ -13,7 +13,7 @@ import { loginSession } from '../../../store';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { loader } from '../../../store/LoaderStore';
 import { toast } from '../../../store/ToastStore';
-import { GetSubjectResponse, addSubject, deleteSubject, getSubjects } from '../../../services';
+import { GetSubjectResponse, addStudentToSubject, addSubject, deleteSubject, getSubjects } from '../../../services';
 
 type TDataTableSubjectsData = {
   id: number;
@@ -209,7 +209,38 @@ export const Subjects = (): JSX.Element => {
     }
   };
 
-  const handleOnSubmitStudent = () => { };
+  const handleOnSubmitStudent = async () => {
+    setShowAddStudentModal(false);
+    setLoader({ show: true });
+    try {
+      const { data } = await addStudentToSubject(
+        selectedSubject?.subjectId ?? 0,
+        studentId,
+        getLoginSession.email
+      );
+      if (data.status === 200 && data.message === "Success") {
+        setStudentId("");
+        setTimeout(() => {
+          setLoader({ show: false });
+          setToast({
+            show: true,
+            title: "Student Added",
+            description: "Student was successfully added to the subject"
+          });
+          fetchSubjects();
+        }, 500);
+      }
+    } catch (error) {
+      setTimeout(() => {
+        setLoader({ show: false });
+        setToast({
+          show: true,
+          title: "Error Encountered",
+          description: "Something went wrong while action is being done"
+        });
+      }, 500);
+    }
+  };
 
   const customAction = (): JSX.Element => {
     return (
