@@ -6,17 +6,18 @@
 import { Container } from "react-bootstrap";
 import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
-import { useAtomValue } from "jotai";
+import { useSetAtom } from "jotai";
 import { loginSession } from "../../../store";
 
 export const Dashboard = (): JSX.Element => {
   const navigate = useNavigate();
-  const getLoginSession = useAtomValue(loginSession);
-  const name = `${getLoginSession.first_name} ${getLoginSession.last_name}`;
+  const setLoginSession = useSetAtom(loginSession);
+  const firstName = sessionStorage.getItem("instructor.firstname");
+  const lastName = sessionStorage.getItem("instructor.lastname");
   return (
     <MainContainer
       title="Dashboard"
-      profile={{ name }}
+      profile={{ name: `${firstName} ${lastName}` }}
       sidebar={[
         {
           icon: <i className="fa-solid fa-gauge"></i>,
@@ -57,7 +58,18 @@ export const Dashboard = (): JSX.Element => {
           label: "Logout",
           selected: false,
           onClick: () => {
-            navigate("/instructor/logout");
+            sessionStorage.removeItem("instructor.firstname");
+            sessionStorage.removeItem("instructor.lastname");
+            sessionStorage.removeItem("instructor.email");
+            sessionStorage.removeItem("instructor.college");
+            setLoginSession({
+              login: false,
+              email: "",
+              first_name: "",
+              last_name: "",
+              college: ""
+            });
+            navigate("/instructor");
           }
         }
       ]}>

@@ -9,21 +9,27 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CheckBoxIcon } from "../../../assets/icons/CheckBoxIcon";
 import { loginSession } from "../../../store";
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 
 export const Profile = (): JSX.Element => {
   const navigate = useNavigate();
-  const getLoginSession = useAtomValue(loginSession);
-  const [firstName, setFirstName] = useState(getLoginSession.first_name);
-  const [lastName, setLastName] = useState(getLoginSession.last_name);
-  const [department, setDepartment] = useState(getLoginSession.college);
-  const [emailAddress, setEmailAddress] = useState(getLoginSession.email);
+  const [getLoginSession, setLoginSession] = useAtom(loginSession);
+  const [firstName, setFirstName] = useState(
+    sessionStorage.getItem("instructor.firstname") ?? ""
+  );
+  const [lastName, setLastName] = useState(
+    sessionStorage.getItem("instructor.lastname") ?? ""
+  );
+  const [department, setDepartment] = useState(
+    sessionStorage.getItem("instructor.college") ?? ""
+  );
+  const [emailAddress, setEmailAddress] = useState(
+    sessionStorage.getItem("instructor.email") ?? ""
+  );
   const [updatePassword, setUpdatePassword] = useState(false);
   const [password, setPassword] = useState("");
   const [newPasword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const name = `${getLoginSession.first_name} ${getLoginSession.last_name}`;
 
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -32,7 +38,7 @@ export const Profile = (): JSX.Element => {
   return (
     <MainContainer
       title="Profile"
-      profile={{ name }}
+      profile={{ name: `${firstName}, ${lastName}` }}
       sidebar={[
         {
           icon: <i className="fa-solid fa-gauge"></i>,
@@ -73,7 +79,18 @@ export const Profile = (): JSX.Element => {
           label: "Logout",
           selected: false,
           onClick: () => {
-            navigate("/instructor/logout");
+            sessionStorage.removeItem("instructor.firstname");
+            sessionStorage.removeItem("instructor.lastname");
+            sessionStorage.removeItem("instructor.email");
+            sessionStorage.removeItem("instructor.college");
+            setLoginSession({
+              login: false,
+              email: "",
+              first_name: "",
+              last_name: "",
+              college: ""
+            });
+            navigate("/instructor");
           }
         }
       ]}>

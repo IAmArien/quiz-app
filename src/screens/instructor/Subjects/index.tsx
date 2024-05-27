@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { CSSObject } from 'styled-components';
 import { loginSession } from '../../../store';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useSetAtom } from 'jotai';
 import { loader } from '../../../store/LoaderStore';
 import { toast } from '../../../store/ToastStore';
 import { GetSubjectResponse, addStudentToSubject, addSubject, deleteSubject, getSubjects } from '../../../services';
@@ -26,7 +26,7 @@ type TDataTableSubjectsData = {
 
 export const Subjects = (): JSX.Element => {
   const navigate = useNavigate();
-  const getLoginSession = useAtomValue(loginSession);
+  const [getLoginSession, setLoginSession] = useAtom(loginSession);
   const setLoader = useSetAtom(loader);
   const setToast = useSetAtom(toast);
   const [showDeleteSubjectModal, setShowDeleteSubjectModal] = useState(false);
@@ -39,7 +39,8 @@ export const Subjects = (): JSX.Element => {
   const [studentId, setStudentId] = useState("");
   const [data, setData] = useState<TDataTableSubjectsData[]>([]);
 
-  const name = `${getLoginSession.first_name} ${getLoginSession.last_name}`;
+  const firstName = sessionStorage.getItem("instructor.firstname");
+  const lastName = sessionStorage.getItem("instructor.lastname");
 
   const columns = [
     {
@@ -118,7 +119,8 @@ export const Subjects = (): JSX.Element => {
 
   const fetchSubjects = async () => {
     try {
-      const { data } = await getSubjects(getLoginSession.email);
+      const email = sessionStorage.getItem("instructor.email") ?? getLoginSession.email;
+      const { data } = await getSubjects(email);
       if (data.status === 200 && data.message === "Success") {
         const subjects = data.data.map((value: GetSubjectResponse, index: number) => {
           return {
@@ -149,11 +151,12 @@ export const Subjects = (): JSX.Element => {
     setShowAddSubjectModal(false);
     setLoader({ show: true });
     try {
+      const email = sessionStorage.getItem("instructor.email");
       const { data } = await addSubject(
         subjectTitle,
         subjectDesc,
         section,
-        getLoginSession.email
+        email ?? getLoginSession.email
       );
       if (data.status === 200 && data.message === "Success") {
         setSubjectTitle("");
@@ -213,10 +216,11 @@ export const Subjects = (): JSX.Element => {
     setShowAddStudentModal(false);
     setLoader({ show: true });
     try {
+      const email = sessionStorage.getItem("instructor.email");
       const { data } = await addStudentToSubject(
         selectedSubject?.subjectId ?? 0,
         studentId,
-        getLoginSession.email
+        email ?? getLoginSession.email
       );
       if (data.status === 200 && data.message === "Success") {
         setStudentId("");
@@ -269,7 +273,7 @@ export const Subjects = (): JSX.Element => {
     <>
       <MainContainer
         title="Subjects"
-        profile={{ name }}
+        profile={{ name: `${firstName} ${lastName}` }}
         sidebar={[
           {
             icon: <i className="fa-solid fa-gauge"></i>,
@@ -310,7 +314,18 @@ export const Subjects = (): JSX.Element => {
             label: "Logout",
             selected: false,
             onClick: () => {
-              navigate("/instructor/logout");
+              sessionStorage.removeItem("instructor.firstname");
+              sessionStorage.removeItem("instructor.lastname");
+              sessionStorage.removeItem("instructor.email");
+              sessionStorage.removeItem("instructor.college");
+              setLoginSession({
+                login: false,
+                email: "",
+                first_name: "",
+                last_name: "",
+                college: ""
+              });
+              navigate("/instructor");
             }
           }
         ]}>

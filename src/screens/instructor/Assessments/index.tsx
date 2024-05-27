@@ -10,7 +10,7 @@ import { CSSObject } from "styled-components";
 import DataTable from "react-data-table-component";
 import React, { useEffect, useState } from "react";
 import { loginSession } from "../../../store";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { loader } from "../../../store/LoaderStore";
 import { toast } from "../../../store/ToastStore";
 import { GetAssessmentResponse, GetSubjectResponse, addAssessment, getAssessments, getSubjects } from "../../../services";
@@ -36,7 +36,7 @@ type TSubjectListSelection = {
 
 export const Assessments = (): JSX.Element => {
   const navigate = useNavigate();
-  const getLoginSession = useAtomValue(loginSession);
+  const [getLoginSession, setLoginSession] = useAtom(loginSession);
   const setLoader = useSetAtom(loader);
   const setToast = useSetAtom(toast);
   const [showAddAssessmentModal, setShowAddAssessmentModal] = useState(false);
@@ -49,7 +49,8 @@ export const Assessments = (): JSX.Element => {
   const [assessmentDesc, setAssessmentDesc] = useState("");
 
   const assessmentLink = `${HOST_URL}/${selectedAssessment?.hash}/${selectedAssessment?.assessmentId}`;
-  const name = `${getLoginSession.first_name} ${getLoginSession.last_name}`;
+  const firstName = sessionStorage.getItem("instructor.firstname");
+  const lastName = sessionStorage.getItem("instructor.lastname");
 
   const columns = [
     {
@@ -147,7 +148,8 @@ export const Assessments = (): JSX.Element => {
 
   const fetchSubjects = async () => {
     try {
-      const { data } = await getSubjects(getLoginSession.email);
+      const email = sessionStorage.getItem("instructor.email");
+      const { data } = await getSubjects(email ?? getLoginSession.email);
       if (data.status === 200 && data.message === "Success") {
         const subjects = data.data.map((value: GetSubjectResponse, index: number) => {
           return {
@@ -171,7 +173,8 @@ export const Assessments = (): JSX.Element => {
 
   const fetchAssessments = async () => {
     try {
-      const { data } = await getAssessments(getLoginSession.email);
+      const email = sessionStorage.getItem("instructor.email");
+      const { data } = await getAssessments(email ?? getLoginSession.email);
       if (data.status === 200 && data.message === "Success") {
         const assessments: TDataTableAssessmentData[] = data.data.map((value: GetAssessmentResponse, index: number) => {
           return {
@@ -205,11 +208,12 @@ export const Assessments = (): JSX.Element => {
     setShowAddAssessmentModal(false);
     setLoader({ show: true });
     try {
+      const email = sessionStorage.getItem("instructor.email");
       const { data } = await addAssessment(
         assessmentTitle,
         assessmentDesc,
         selectedSubjectId,
-        getLoginSession.email
+        email ?? getLoginSession.email
       );
       if (data.status === 200 && data.message === "Success") {
         setAssessmentTitle("");
@@ -273,7 +277,7 @@ export const Assessments = (): JSX.Element => {
     <>
       <MainContainer
         title="Assessments"
-        profile={{ name }}
+        profile={{ name: `${firstName} ${lastName}` }}
         sidebar={[
           {
             icon: <i className="fa-solid fa-gauge"></i>,
@@ -314,7 +318,18 @@ export const Assessments = (): JSX.Element => {
             label: "Logout",
             selected: false,
             onClick: () => {
-              navigate("/instructor/logout");
+              sessionStorage.removeItem("instructor.firstname");
+              sessionStorage.removeItem("instructor.lastname");
+              sessionStorage.removeItem("instructor.email");
+              sessionStorage.removeItem("instructor.college");
+              setLoginSession({
+                login: false,
+                email: "",
+                first_name: "",
+                last_name: "",
+                college: ""
+              });
+              navigate("/instructor");
             }
           }
         ]}>

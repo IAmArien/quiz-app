@@ -23,13 +23,17 @@ export const Login = (): JSX.Element => {
     event.preventDefault();
     const { data } =  await login(emailAddress, password);
     if (data.status === 200 && data.message === "Success") {
+      sessionStorage.setItem("instructor.firstname", data.data.first_name);
+      sessionStorage.setItem("instructor.lastname", data.data.last_name);
+      sessionStorage.setItem("instructor.email", data.data.email);
+      sessionStorage.setItem("instructor.college", data.data.college);
       setLoginSession({
         login: true,
         email: data.data.email,
         first_name: data.data.first_name,
         last_name: data.data.last_name,
         college: data.data.college
-      })
+      });
       navigate("/instructor/dashboard");
     } else {
       setEmailAddress("");
