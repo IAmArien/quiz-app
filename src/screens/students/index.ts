@@ -4,3 +4,6 @@
  */
 
 export * as StudentAssessments from './Assessments';
+export * as StudentRegister from './Register';
+export * as StudentLogin from './Login';
+export * as StudentDashboard from './Dashboard';

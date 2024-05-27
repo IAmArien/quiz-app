@@ -9,6 +9,14 @@ export type BaseResponse<T> = {
   data: T;
 };
 
+export type RegisterResponse = {
+  email: string;
+  student_id?: string;
+  first_name: string;
+  last_name: string;
+  college: string;
+};
+
 export type LoginResponse = {
   email: string;
   first_name: string;

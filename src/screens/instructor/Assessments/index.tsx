@@ -48,7 +48,7 @@ export const Assessments = (): JSX.Element => {
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentDesc, setAssessmentDesc] = useState("");
 
-  const assessmentLink = `${HOST_URL}/${selectedAssessment?.hash}/${selectedAssessment?.id}`;
+  const assessmentLink = `${HOST_URL}/${selectedAssessment?.hash}/${selectedAssessment?.assessmentId}`;
   const name = `${getLoginSession.first_name} ${getLoginSession.last_name}`;
 
   const columns = [

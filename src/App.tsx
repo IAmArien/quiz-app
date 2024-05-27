@@ -7,6 +7,9 @@ import './styles/App.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import {
   StudentAssessments,
+  StudentDashboard,
+  StudentLogin,
+  StudentRegister,
   Assessments as InstructorAssessments,
   Dashboard as InstructorDashboard,
   Login as InstructorLogin,
@@ -23,6 +26,18 @@ function App() {
     {
       path: "/",
       element: <Root />
+    },
+    {
+      path: "/students",
+      element: <StudentLogin.Login />
+    },
+    {
+      path: "/students/register",
+      element: <StudentRegister.Register />
+    },
+    {
+      path: "/students/dashboard",
+      element: <StudentDashboard.Dashboard />
     },
     {
       path: "/instructor",
