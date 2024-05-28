@@ -4,13 +4,14 @@
  */
 
 import { useEffect, useState } from "react";
-import { Button, Col, Row } from "react-bootstrap";
+import { Badge, Button, Col, Row } from "react-bootstrap";
 import { GetAnswerChoicesResponse, GetAnswersResponse, GetAssessmentResponse, getAssessment } from "../../../../services";
 import { getAnswers, verifyAssessment } from "../../../../services/StudentApi";
 import { useAtom } from "jotai";
 import { toast } from "../../../../store/ToastStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { merge } from "../../../../utils";
+import React from "react";
 
 type TChoices = {
   choiceId: number;
@@ -130,6 +131,48 @@ export const AssessmentConfirmation = (): JSX.Element => {
     fetchAssessment()
   }, []);
 
+  const isAnswerCorrect = (choice: TChoices): boolean => {
+    return choice.selected === true && choice.answer === true;
+  };
+
+  const isAnswerWrong = (choice: TChoices): boolean => {
+    if (choice.selected && choice.answer) {
+      return false;
+    }
+    if (choice.selected && choice.answer === false) {
+      return true;
+    }
+    return false;
+  };
+
+  const isAnAnswer = (choice: TChoices): boolean => {
+    return choice.answer === true;
+  };
+
+  const isChoosenAnswer = (choice: TChoices): boolean => {
+    return choice.selected === true;
+  };
+
+  const displayChoice = (letter: string, choice: string | undefined): JSX.Element => {
+    if (choice && choice.length > 0) {
+      return (<><b>{`${letter}.)`}</b>&nbsp;{choice}</>);
+    }
+    return (<><b>{`${letter}.)`}</b>&nbsp;{"No option added."}</>);
+  };
+
+  const displayIcon = (choice: TChoices): JSX.Element => {
+    if (isAnswerCorrect(choice)) {
+      return <i className="fa-solid fa-circle-check text-[#198754]"></i>;
+    }
+    if (isAnAnswer(choice)) {
+      return <i className="fa-solid fa-circle-check text-[#198754]"></i>;
+    }
+    if (isChoosenAnswer(choice)) {
+      return <i className="fa-solid fa-circle-xmark text-[red]"></i>;
+    }
+    return <i className="fa-regular fa-circle"></i>;
+  };
+
   return (
     <>
       <div className="min-h-screen full bg-[#F0F0F0] flex flex-col p-[20px] gap-[15px]">
@@ -178,6 +221,94 @@ export const AssessmentConfirmation = (): JSX.Element => {
           </Col>
           <Col lg={3}></Col>
         </Row>
+        {questions.map((value: TQuestions, index:number) => {
+          return (
+            <React.Fragment key={index}>
+              <Row>
+                <Col lg={3}></Col>
+                <Col lg={6} md={12} sm={12}>
+                  <div className="rounded-[10px] py-[16px] px-[16px] bg-[#FFFFFF]">
+                    <Badge bg="success open-sans-700 uppercase">
+                      {`Question No. ${value.questionNumber}`}
+                    </Badge>
+                    <div className="border-[1px] rounded-[7px] mt-[10px] px-[15px] py-[10px]">
+                      <p className="open-sans-600 text-[#000000] text-[17px]">
+                        {value.question}
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-[10px] mt-[20px]">
+                      <div className="flex flex-row gap-[10px] items-center">
+                        <div className="flex-1 flex flex-row gap-[10px] items-center">
+                          <div
+                            className={merge(
+                              "px-[15px] py-[10px] border-[1px] rounded-[7px] flex-1 flex flex-row items-center gap-[10px] open-sans", {
+                                "border-[#198754]": isAnswerCorrect(value.choices[0]),
+                                "border-[red]": isAnswerWrong(value.choices[0]),
+                                "open-sans-600": isAnswerCorrect(value.choices[0]) || value.choices[0].selected,
+                                "text-[#198754]": isAnswerCorrect(value.choices[0]),
+                                "text-[red]": isAnswerWrong(value.choices[0]),
+                                "text-[#c8c8c8]": value.choices[0].choice.length === 0
+                            })}>
+                            {displayIcon(value.choices[0])}
+                            {displayChoice("A", value.choices[0].choice)}
+                          </div>
+                        </div>
+                        <div className="flex-1 flex flex-row gap-[10px] items-center">
+                          <div
+                            className={merge(
+                              "px-[15px] py-[10px] border-[1px] rounded-[7px] flex-1 flex flex-row items-center gap-[10px] open-sans", {
+                                "border-[#198754]": isAnswerCorrect(value.choices[1]),
+                                "border-[red]": isAnswerWrong(value.choices[1]),
+                                "open-sans-600": isAnswerCorrect(value.choices[1]) || value.choices[1].selected,
+                                "text-[#198754]": isAnswerCorrect(value.choices[1]),
+                                "text-[red]": isAnswerWrong(value.choices[1]),
+                                "text-[#c8c8c8]": value.choices[1].choice.length === 0
+                            })}>
+                            {displayIcon(value.choices[1])}
+                            {displayChoice("B", value.choices[1].choice)}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-row gap-[10px] items-center">
+                        <div className="flex-1 flex flex-row gap-[10px] items-center">
+                          <div
+                            className={merge(
+                              "px-[15px] py-[10px] border-[1px] rounded-[7px] flex-1 flex flex-row items-center gap-[10px] open-sans", {
+                              "border-[#198754]": isAnswerCorrect(value.choices[2]),
+                              "border-[red]": isAnswerWrong(value.choices[2]),
+                              "open-sans-600": isAnswerCorrect(value.choices[2]) || value.choices[2].selected,
+                              "text-[#198754]": isAnswerCorrect(value.choices[2]),
+                              "text-[red]": isAnswerWrong(value.choices[2]),
+                              "text-[#c8c8c8]": value.choices[2].choice.length === 0
+                            })}>
+                            {displayIcon(value.choices[2])}
+                            {displayChoice("C", value.choices[2].choice)}
+                          </div>
+                        </div>
+                        <div className="flex-1 flex flex-row gap-[10px] items-center">
+                          <div
+                            className={merge(
+                              "px-[15px] py-[10px] border-[1px] rounded-[7px] flex-1 flex flex-row items-center gap-[10px] open-sans", {
+                              "border-[#198754]": isAnswerCorrect(value.choices[3]),
+                              "border-[red]": isAnswerWrong(value.choices[3]),
+                              "open-sans-600": isAnswerCorrect(value.choices[3]) || value.choices[3].selected,
+                              "text-[#198754]": isAnswerCorrect(value.choices[3]),
+                              "text-[red]": isAnswerWrong(value.choices[3]),
+                              "text-[#c8c8c8]": value.choices[3].choice.length === 0
+                            })}>
+                            {displayIcon(value.choices[3])}
+                            {displayChoice("D", value.choices[3].choice)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+                <Col lg={3}></Col>
+              </Row>
+            </React.Fragment>
+          )
+        })}
         <Row>
           <Col lg={3}></Col>
           <Col lg={6} md={12} sm={12}>
