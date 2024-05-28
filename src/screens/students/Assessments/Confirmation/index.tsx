@@ -5,19 +5,69 @@
 
 import { useEffect, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
-import { GetAssessmentResponse, getAssessment } from "../../../../services";
-import { verifyAssessment } from "../../../../services/StudentApi";
+import { GetAnswerChoicesResponse, GetAnswersResponse, GetAssessmentResponse, getAssessment } from "../../../../services";
+import { getAnswers, verifyAssessment } from "../../../../services/StudentApi";
 import { useAtom } from "jotai";
 import { toast } from "../../../../store/ToastStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { merge } from "../../../../utils";
 
+type TChoices = {
+  choiceId: number;
+  choiceType: "A" | "B" | "C" | "D";
+  choice: string;
+  answer: boolean;
+  selected: boolean;
+}
+
+type TQuestions = {
+  questionNumber: number;
+  question: string;
+  choices: TChoices[];
+};
+
 export const AssessmentConfirmation = (): JSX.Element => {
   const navigate = useNavigate();
   const params = useParams();
   const [assessment, setAssessment] = useState<GetAssessmentResponse | null>(null);
+  const [questions, setQuestions] = useState<TQuestions[]>([]);
   const [isDenied, setIsDenied] = useState(false);
   const [getToast, setToast] = useAtom(toast);
+
+  const fetchAnswers = async (email: string) => {
+    try {
+      const studentId = sessionStorage.getItem("student.studentId");
+      const { data } = await getAnswers(
+        Number(params["id"]),
+        studentId ?? "",
+        email,
+      );
+      if (data.status === 200 && data.message == "Success") {
+        const remoteQuestions = data.data.map((value: GetAnswersResponse) => {
+          return {
+            questionNumber: Number(value.question_number),
+            question: value.question,
+            choices: value.choices.map((choices: GetAnswerChoicesResponse) => {
+              return {
+                choiceId: Number(choices.choiceId),
+                choiceType: choices.choiceType,
+                choice: choices.choice,
+                answer: choices.answer === "true",
+                selected: choices.selected === "true"
+              }
+            })
+          }
+        });
+        setQuestions(remoteQuestions);
+      }
+    } catch (error) {
+      setToast({
+        show: true,
+        title: "Error Encountered",
+        description: "Something went wrong while action is being done"
+      });
+    }
+  };
 
   const fetchAssessment = async () => {
     setIsDenied(false);
@@ -31,7 +81,7 @@ export const AssessmentConfirmation = (): JSX.Element => {
             Number(assessment.id),
             Number(assessment.subject_id),
             () => {
-              
+              fetchAnswers(assessment.email ?? "")
             }
           );
         } else {

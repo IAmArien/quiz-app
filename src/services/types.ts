@@ -111,3 +111,17 @@ export type AddAnswersResponse = {
   question: string;
   choices: AddAnswerChoicesResponse[];
 };
+
+export type GetAnswerChoicesResponse = {
+  choiceId: string;
+  choiceType: "A" | "B" | "C" | "D";
+  choice: string;
+  answer: string;
+  selected: string;
+}
+
+export type GetAnswersResponse = {
+  question_number: string;
+  question: string;
+  choices: GetAnswerChoicesResponse[];
+};
