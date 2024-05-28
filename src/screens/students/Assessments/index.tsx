@@ -6,7 +6,7 @@
 import { Badge, Button, Col, Modal, Row, Toast } from "react-bootstrap";
 import { GetAssessmentResponse, GetChoicesResponse, GetQuestionsResponse, getAssessment, getQuestions } from "../../../services";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAtom } from "jotai";
 import { toast } from "../../../store/ToastStore";
 import { verifyAssessment } from "../../../services/StudentApi";
@@ -28,6 +28,7 @@ type TQuestions = {
 };
 
 export const Assessment = (): JSX.Element => {
+  const navigate = useNavigate();
   const params = useParams();
   const [assessment, setAssessment] = useState<GetAssessmentResponse | null>(null);
   const [questions, setQuestions] = useState<TQuestions[]>([]);
@@ -134,7 +135,16 @@ export const Assessment = (): JSX.Element => {
   };
 
   const handleSubmitAssessment = () => {
-
+    setConfirmModal(false);
+    try {
+      setTimeout(() => {
+        const hash = params["assessmentHash"];
+        const id = params["id"];
+        navigate(`/students/assessment/confirmation/${hash}/${id}`);
+      }, 500);
+    } catch (error) {
+      
+    }
   };
 
   return (

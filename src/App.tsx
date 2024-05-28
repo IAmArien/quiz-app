@@ -7,6 +7,7 @@ import './styles/App.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import {
   StudentAssessments,
+  StudentAssessmentsConfirmation,
   StudentDashboard,
   StudentLogin,
   StudentRegister,
@@ -70,6 +71,10 @@ function App() {
     {
       path: "/students/assessment/:assessmentHash/:id",
       element: <StudentAssessments.Assessment />
+    },
+    {
+      path: "/students/assessment/confirmation/:assessmentHash/:id",
+      element: <StudentAssessmentsConfirmation.AssessmentConfirmation />
     }
   ]);
 
