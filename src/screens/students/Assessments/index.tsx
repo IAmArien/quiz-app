@@ -18,7 +18,7 @@ type TChoices = {
   choiceType: "A" | "B" | "C" | "D";
   choice: string;
   answer: boolean;
-  selected?: boolean;
+  selected: boolean;
 }
 
 type TQuestions = {
@@ -47,7 +47,8 @@ export const Assessment = (): JSX.Element => {
                 choiceId: Number(choices.choiceId),
                 choiceType: choices.choiceType,
                 choice: choices.choice,
-                answer: choices.answer === "true"
+                answer: choices.answer === "true",
+                selected: false
               }
             })
           }
@@ -196,10 +197,30 @@ export const Assessment = (): JSX.Element => {
                             className={merge(
                               "cursor-pointer px-[15px] py-[10px] border-[1px] rounded-[7px] flex-1 flex flex-row items-center gap-[10px] open-sans", {
                                 "border-[#198754]": value.choices[0].selected === true,
+                                "open-sans-600": value.choices[0].selected === true,
+                                "text-[#198754]": value.choices[0].selected === true,
                                 "text-[#c8c8c8]": value.choices[0].choice.length === 0,
                                 "cursor-not-allowed": value.choices[0].choice.length === 0
                             })}
-                            onClick={() => {}}>
+                            onClick={() => {
+                              if (value.choices[0].choice.length === 0) return;
+                              const updated = questions.map((innerValue: TQuestions) => {
+                                if (value.questionNumber === innerValue.questionNumber) {
+                                  const choice = innerValue.choices[0];
+                                  if (choice.selected) {
+                                    choice.selected = false;
+                                  } else {
+                                    choice.selected = true;
+                                  }
+                                  innerValue.choices[0] = choice;
+                                  innerValue.choices[1].selected = false;
+                                  innerValue.choices[2].selected = false;
+                                  innerValue.choices[3].selected = false;
+                                }
+                                return innerValue;
+                              });
+                              setQuestions(updated);
+                            }}>
                             {value.choices[0].selected ? (
                               <i className="fa-solid fa-circle-check"></i>
                             ) : (
@@ -213,10 +234,26 @@ export const Assessment = (): JSX.Element => {
                             className={merge(
                               "cursor-pointer px-[15px] py-[10px] border-[1px] rounded-[7px] flex-1 flex flex-row items-center gap-[10px] open-sans", {
                                 "border-[#198754]": value.choices[1].selected === true,
+                                "open-sans-600": value.choices[1].selected === true,
+                                "text-[#198754]": value.choices[1].selected === true,
                                 "text-[#c8c8c8]": value.choices[1].choice.length === 0,
                                 "cursor-not-allowed": value.choices[1].choice.length === 0
                             })}
-                            onClick={() => {}}>
+                            onClick={() => {
+                              if (value.choices[1].choice.length === 0) return;
+                              const updated = questions.map((innerValue: TQuestions) => {
+                                if (value.questionNumber === innerValue.questionNumber) {
+                                  const choice = innerValue.choices[1];
+                                  choice.selected = !choice.selected;
+                                  innerValue.choices[0].selected = false;
+                                  innerValue.choices[1] = choice;
+                                  innerValue.choices[2].selected = false;
+                                  innerValue.choices[3].selected = false;
+                                }
+                                return innerValue;
+                              });
+                              setQuestions(updated);
+                            }}>
                             {value.choices[1].selected ? (
                               <i className="fa-solid fa-circle-check"></i>
                             ) : (
@@ -232,10 +269,26 @@ export const Assessment = (): JSX.Element => {
                             className={merge(
                               "cursor-pointer px-[15px] py-[10px] border-[1px] rounded-[7px] flex-1 flex flex-row items-center gap-[10px] open-sans", {
                               "border-[#198754]": value.choices[2].selected === true,
+                              "open-sans-600": value.choices[2].selected === true,
+                              "text-[#198754]": value.choices[2].selected === true,
                               "text-[#c8c8c8]": value.choices[2].choice.length === 0,
                               "cursor-not-allowed": value.choices[2].choice.length === 0
                             })}
-                            onClick={() => {}}>
+                            onClick={() => {
+                              if (value.choices[2].choice.length === 0) return;
+                              const updated = questions.map((innerValue: TQuestions) => {
+                                if (value.questionNumber === innerValue.questionNumber) {
+                                  const choice = innerValue.choices[2];
+                                  choice.selected = !choice.selected;
+                                  innerValue.choices[0].selected = false;
+                                  innerValue.choices[1].selected = false;
+                                  innerValue.choices[2] = choice;
+                                  innerValue.choices[3].selected = false;
+                                }
+                                return innerValue;
+                              });
+                              setQuestions(updated);
+                            }}>
                             {value.choices[2].selected ? (
                               <i className="fa-solid fa-circle-check"></i>
                             ) : (
@@ -249,10 +302,26 @@ export const Assessment = (): JSX.Element => {
                             className={merge(
                               "cursor-pointer px-[15px] py-[10px] border-[1px] rounded-[7px] flex-1 flex flex-row items-center gap-[10px] open-sans", {
                               "border-[#198754]": value.choices[3].selected === true,
+                              "open-sans-600": value.choices[3].selected === true,
+                              "text-[#198754]": value.choices[3].selected === true,
                               "text-[#c8c8c8]": value.choices[3].choice.length === 0,
                               "cursor-not-allowed": value.choices[3].choice.length === 0
                             })}
-                            onClick={() => {}}>
+                            onClick={() => {
+                              if (value.choices[3].choice.length === 0) return;
+                              const updated = questions.map((innerValue: TQuestions) => {
+                                if (value.questionNumber === innerValue.questionNumber) {
+                                  const choice = innerValue.choices[3];
+                                  choice.selected = !choice.selected;
+                                  innerValue.choices[0].selected = false;
+                                  innerValue.choices[1].selected = false;
+                                  innerValue.choices[2].selected = false;
+                                  innerValue.choices[3] = choice;
+                                }
+                                return innerValue;
+                              });
+                              setQuestions(updated);
+                            }}>
                             {value.choices[3].selected ? (
                               <i className="fa-solid fa-circle-check"></i>
                             ) : (
