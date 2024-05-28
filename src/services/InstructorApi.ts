@@ -177,3 +177,22 @@ export const addStudentToSubject = async (
   );
   return response;
 };
+
+export const disableQuestions = async (
+  assessmentId: number,
+  email: string
+) => {
+  const response = await axios.post<BaseResponse<AddStudentToSubjectResponse>>(
+    `${BASE_URL}/instructor/disable_questions.php`,
+    {
+      assessment_id: assessmentId,
+      instructor_email: email
+    },
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  );
+  return response;
+};

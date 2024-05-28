@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { Badge, Button, Col, Row, Toast } from "react-bootstrap"
 import { useNavigate, useParams } from "react-router-dom";
-import { GetAssessmentResponse, GetChoicesResponse, GetQuestionsResponse, addQuestions, getAssessment, getQuestions } from "../../../services";
+import { GetAssessmentResponse, GetChoicesResponse, GetQuestionsResponse, addQuestions, disableQuestions, getAssessment, getQuestions } from "../../../services";
 import { useAtomValue, useSetAtom } from "jotai";
 import { toast } from "../../../store/ToastStore";
 import { loader } from "../../../store/LoaderStore";
@@ -126,9 +126,10 @@ export const QuestionsCreate = (): JSX.Element => {
 
   const fetchQuestions = async () => {
     try {
+      const email = sessionStorage.getItem("instructor.email");
       const { data } = await getQuestions(
         Number(params["id"]),
-        getLoginSession.email
+        email ?? getLoginSession.email
       );
       if (data.status === 200 && data.message == "Success") {
         const remoteQuestions = data.data.map((value: GetQuestionsResponse) => {
@@ -163,10 +164,11 @@ export const QuestionsCreate = (): JSX.Element => {
   const onPublishClick = async () => {
     setLoader({ show: true });
     try {
+      const email = sessionStorage.getItem("instructor.email");
       const { data } = await addQuestions(
         assessment?.assessment_hash ?? "",
         assessment?.id ?? 0,
-        getLoginSession.email,
+        email ?? getLoginSession.email,
         JSON.stringify(questions)
       );
       if (data.status === 200 && data.message === "Success") {
@@ -176,6 +178,37 @@ export const QuestionsCreate = (): JSX.Element => {
             show: true,
             title: "Questions Published",
             description: "Assessment was published successfully"
+          });
+          setTimeout(() => {
+            navigate("/instructor/assessments");
+          }, 1500);
+        }, 500);
+      }
+    } catch (error) {
+      setLoader({ show: false });
+      setToast({
+        show: true,
+        title: "Error Encountered",
+        description: "Something went wrong while action is being done"
+      });
+    }
+  };
+
+  const onUnpublishClick = async () => {
+    setLoader({ show: true });
+    try {
+      const email = sessionStorage.getItem("instructor.email");
+      const { data } = await disableQuestions(
+        assessment?.id ?? 0,
+        email ?? getLoginSession.email
+      );
+      if (data.status === 200 && data.message === "Success") {
+        setTimeout(() => {
+          setLoader({ show: false });
+          setToast({
+            show: true,
+            title: "Questions Unpublished",
+            description: "Assessment was unpublished successfully"
           });
           setTimeout(() => {
             navigate("/instructor/assessments");
@@ -213,7 +246,7 @@ export const QuestionsCreate = (): JSX.Element => {
               {/* Please contact your administrator / instructor if there are any issues regarding the status
               of this form */}
             </p>
-            <div className="flex flex-row items-center gap-[20px] mt-[20px]">
+            <div className="flex flex-row items-center gap-[10px] mt-[20px]">
               <Button
                 disabled={!isReadyToPublish()}
                 variant="outline-success"
@@ -221,8 +254,18 @@ export const QuestionsCreate = (): JSX.Element => {
                 onClick={onPublishClick}>
                 <i className="fa-solid fa-cloud-arrow-up"></i>&nbsp;&nbsp;Publish
               </Button>
+              {assessment?.assessment_status === "ACTIVE" && (
+                <Button
+                  variant="outline-secondary"
+                  size="sm"
+                  onClick={onUnpublishClick}>
+                  <i className="fa-solid fa-eye-slash"></i>&nbsp;&nbsp;Unpublish
+                </Button>
+              )}
               {getLoader.show && (
-                <div className="spinner-border text-success" role="status"></div>
+                <div className="ml-[15px]">
+                  <div className="spinner-border text-success" role="status"></div>
+                </div>
               )}
             </div>
           </div>
