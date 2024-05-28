@@ -97,3 +97,17 @@ export type AddStudentToSubjectResponse = {
   student_id: number;
   subject_id: number;
 };
+
+export type AddAnswerChoicesResponse = {
+  choiceId: number;
+  choiceType: "A" | "B" | "C" | "D";
+  choice: string;
+  answer: boolean;
+  selected: boolean;
+};
+
+export type AddAnswersResponse = {
+  questionNumber: number;
+  question: string;
+  choices: AddAnswerChoicesResponse[];
+};

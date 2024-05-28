@@ -9,9 +9,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAtom } from "jotai";
 import { toast } from "../../../store/ToastStore";
-import { verifyAssessment } from "../../../services/StudentApi";
+import { addQuestions, verifyAssessment } from "../../../services/StudentApi";
 import React from "react";
 import { merge } from "../../../utils";
+import { loader } from "../../../store/LoaderStore";
 
 type TChoices = {
   choiceId: number;
@@ -35,6 +36,7 @@ export const Assessment = (): JSX.Element => {
   const [isDenied, setIsDenied] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [getToast, setToast] = useAtom(toast);
+  const [getLoader, setLoader] = useAtom(loader);
 
   const fetchQuestions = async (email: string) => {
     try {
@@ -134,16 +136,37 @@ export const Assessment = (): JSX.Element => {
     return (<><b>{`${letter}.)`}</b>&nbsp;{"No option added."}</>);
   };
 
-  const handleSubmitAssessment = () => {
+  const handleSubmitAssessment = async () => {
+    setLoader({ show: true });
     setConfirmModal(false);
     try {
-      setTimeout(() => {
-        const hash = params["assessmentHash"];
-        const id = params["id"];
-        navigate(`/students/assessment/confirmation/${hash}/${id}`);
-      }, 500);
+      const email = sessionStorage.getItem("instructor.email");
+      const { data } = await addQuestions(
+        assessment?.assessment_hash ?? "",
+        assessment?.id ?? 0,
+        email ?? "",
+        JSON.stringify(questions)
+      );
+      if (data.status === 200 && data.message === "Success") {
+        setLoader({ show: false });
+        setToast({
+          show: true,
+          title: "Answers Submitted",
+          description: "Answers was submitted successfully"
+        });
+        setTimeout(() => {
+          const hash = params["assessmentHash"];
+          const id = params["id"];
+          navigate(`/students/assessment/confirmation/${hash}/${id}`);
+        }, 1500);
+      }
     } catch (error) {
-      
+      setLoader({ show: false });
+      setToast({
+        show: true,
+        title: "Error Encountered",
+        description: "Something went wrong while action is being done"
+      });
     }
   };
 

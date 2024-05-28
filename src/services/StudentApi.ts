@@ -4,7 +4,7 @@
  */
 
 import axios from "axios";
-import { BaseResponse, LoginResponse, RegisterResponse } from "./types";
+import { AddAnswersResponse, BaseResponse, LoginResponse, RegisterResponse } from "./types";
 import { BASE_URL } from "../utils/constants";
 
 export const login = async (email: string, password: string) => {
@@ -63,6 +63,29 @@ export const verifyAssessment = async (
       assessment_id: assessmentId,
       subject_id: subjectId,
       student_id: studentId
+    },
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  );
+  return response;
+};
+
+export const addQuestions = async (
+  assessmentHash: string,
+  assessmentId: number,
+  email: string,
+  questions: string
+) => {
+  const response = await axios.post<BaseResponse<AddAnswersResponse[]>>(
+    `${BASE_URL}/students/add_answers.php`,
+    {
+      assessment_hash: assessmentHash,
+      assessment_id: assessmentId,
+      questions: JSON.parse(questions),
+      instructor_email: email
     },
     {
       headers: {
