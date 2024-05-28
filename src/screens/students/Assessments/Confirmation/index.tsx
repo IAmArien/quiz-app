@@ -173,6 +173,20 @@ export const AssessmentConfirmation = (): JSX.Element => {
     return <i className="fa-regular fa-circle"></i>;
   };
 
+  const countCorrectAnswers = (questions: TQuestions[]): number => {
+    let correct = 0;
+    questions.forEach((value: TQuestions) => {
+      correct += value.choices.filter((choices: TChoices) => {
+        return choices.selected && choices.answer;
+      }).length;
+    })
+    return correct;
+  };
+
+  const isPassed = (questions: TQuestions[]): boolean => {
+    return countCorrectAnswers(questions) >= (questions.length / 2);
+  };
+
   return (
     <>
       <div className="min-h-screen full bg-[#F0F0F0] flex flex-col p-[20px] gap-[15px]">
@@ -212,11 +226,16 @@ export const AssessmentConfirmation = (): JSX.Element => {
                   </>
                 )}
               </p>
-              <h3 className={merge("open-sans-600 text-[#198754] text-[16px] mt-[20px] pb-[10px]", {
-                "text-[red]": false
-              })}>
-                Test Score: <b>3/5</b>&nbsp;<b>PASSED</b>
-              </h3>
+              <div className="flex flex-row items-center gap-[10px] mt-[20px]">
+                <h3 className={merge("open-sans-600 text-[#198754] text-[16px]", {
+                  "text-[red]": isPassed(questions) ? false : true
+                })}>
+                  Test Score: <b>{countCorrectAnswers(questions)}/{questions.length}</b>&nbsp;
+                </h3>
+                <Badge bg={isPassed(questions) ? "success" : "danger"}>
+                  {isPassed(questions) ? <>{"PASSED"}</> : <>{"FAILED"}</>}
+                </Badge>
+              </div>
             </div>
           </Col>
           <Col lg={3}></Col>
