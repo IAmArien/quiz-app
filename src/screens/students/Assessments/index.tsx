@@ -3,7 +3,7 @@
  * Reuse as a whole or in part is prohibited without permission.
  */
 
-import { Badge, Button, Col, Row, Toast } from "react-bootstrap";
+import { Badge, Button, Col, Modal, Row, Toast } from "react-bootstrap";
 import { GetAssessmentResponse, GetChoicesResponse, GetQuestionsResponse, getAssessment, getQuestions } from "../../../services";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -32,6 +32,7 @@ export const Assessment = (): JSX.Element => {
   const [assessment, setAssessment] = useState<GetAssessmentResponse | null>(null);
   const [questions, setQuestions] = useState<TQuestions[]>([]);
   const [isDenied, setIsDenied] = useState(false);
+  const [confirmModal, setConfirmModal] = useState(false);
   const [getToast, setToast] = useAtom(toast);
 
   const fetchQuestions = async (email: string) => {
@@ -130,7 +131,11 @@ export const Assessment = (): JSX.Element => {
       return (<><b>{`${letter}.)`}</b>&nbsp;{choice}</>);
     }
     return (<><b>{`${letter}.)`}</b>&nbsp;{"No option added."}</>);
-  }
+  };
+
+  const handleSubmitAssessment = () => {
+
+  };
 
   return (
     <>
@@ -343,7 +348,9 @@ export const Assessment = (): JSX.Element => {
           <Col lg={3}></Col>
           <Col lg={6} md={12} sm={12}>
             <div className="pb-[20px]">
-              <Button variant="success" className="w-full" onClick={() => {}}>
+              <Button variant="success" className="w-full" onClick={() => {
+                setConfirmModal(true);
+              }}>
                 <i className="fa-solid fa-clipboard-check"></i>&nbsp;&nbsp;Submit Answers
               </Button>
             </div>
@@ -364,6 +371,34 @@ export const Assessment = (): JSX.Element => {
           <Toast.Body>{getToast.description}</Toast.Body>
         </Toast>
       </div>
+      <Modal show={confirmModal} centered onHide={() => setConfirmModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title className="open-sans-600">Submit Assessment?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="open-sans text-[15px]">
+            Are you sure you want to submit this assessment? Click on <b>Submit Assessment</b> button
+            to confirm. Once submitted, it cannot be undone.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="open-sans-600"
+            variant="secondary"
+            onClick={() => {
+              setConfirmModal(false);
+            }}>
+            Close
+          </Button>
+          <Button
+            className="open-sans-600"
+            variant="success"
+            type="submit"
+            onClick={handleSubmitAssessment}>
+            Submit Assessment
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
