@@ -64,6 +64,7 @@ export type GetAssessmentResponse = {
   subject_section: string;
   result: string;
   passing: string;
+  email?: string;
 };
 
 export type AddChoicesResponse = {
