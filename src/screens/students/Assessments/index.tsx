@@ -184,9 +184,11 @@ export const Assessment = (): JSX.Element => {
                     <Badge bg="success open-sans-700 uppercase">
                       {`Question No. ${value.questionNumber}`}
                     </Badge>
-                    <p className="open-sans text-[#000000] text-[17px] mt-[5px]">
-                      {value.question}
-                    </p>
+                    <div className="border-[1px] rounded-[7px] mt-[10px] px-[15px] py-[10px]">
+                      <p className="open-sans-600 text-[#000000] text-[17px]">
+                        {value.question}
+                      </p>
+                    </div>
                     <div className="flex flex-col gap-[10px] mt-[20px]">
                       <div className="flex flex-row gap-[10px] items-center">
                         <div className="flex-1 flex flex-row gap-[10px] items-center">
@@ -268,6 +270,17 @@ export const Assessment = (): JSX.Element => {
             </React.Fragment>
           )
         })}
+        <Row>
+          <Col lg={3}></Col>
+          <Col lg={6} md={12} sm={12}>
+            <div className="pb-[20px]">
+              <Button variant="success" className="w-full" onClick={() => {}}>
+                <i className="fa-solid fa-clipboard-check"></i>&nbsp;&nbsp;Submit Answers
+              </Button>
+            </div>
+          </Col>
+          <Col lg={3}></Col>
+        </Row>
       </div>
       <div className="z-[9999] absolute left-0 right-0 bottom-0 mb-[20px] flex flex-col justify-center items-center">
         <Toast show={getToast.show} autohide onClose={() => setToast({
