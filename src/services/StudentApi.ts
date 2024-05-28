@@ -51,3 +51,24 @@ export const register = async (
   );
   return response;
 };
+
+export const verifyAssessment = async (
+  assessmentId: string,
+  subjectId: string,
+  studentId: string
+) => {
+  const response = await axios.post<BaseResponse<any>>(
+    `${BASE_URL}/students/verify_assessment.php`,
+    {
+      assessment_id: assessmentId,
+      subject_id: subjectId,
+      student_id: studentId
+    },
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  );
+  return response;
+};
