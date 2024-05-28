@@ -77,7 +77,8 @@ export const addQuestions = async (
   assessmentHash: string,
   assessmentId: number,
   email: string,
-  questions: string
+  questions: string,
+  studentId: string
 ) => {
   const response = await axios.post<BaseResponse<AddAnswersResponse[]>>(
     `${BASE_URL}/students/add_answers.php`,
@@ -85,7 +86,8 @@ export const addQuestions = async (
       assessment_hash: assessmentHash,
       assessment_id: assessmentId,
       questions: JSON.parse(questions),
-      instructor_email: email
+      instructor_email: email,
+      student_id: studentId
     },
     {
       headers: {

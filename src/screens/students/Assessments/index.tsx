@@ -140,12 +140,13 @@ export const Assessment = (): JSX.Element => {
     setLoader({ show: true });
     setConfirmModal(false);
     try {
-      const email = sessionStorage.getItem("instructor.email");
+      const studentId = sessionStorage.getItem("student.studentId");
       const { data } = await addQuestions(
         assessment?.assessment_hash ?? "",
         assessment?.id ?? 0,
-        email ?? "",
-        JSON.stringify(questions)
+        assessment?.email ?? "",
+        JSON.stringify(questions),
+        studentId ?? ""
       );
       if (data.status === 200 && data.message === "Success") {
         setLoader({ show: false });
