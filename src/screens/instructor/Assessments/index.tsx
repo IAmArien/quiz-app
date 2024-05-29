@@ -48,6 +48,9 @@ export const Assessments = (): JSX.Element => {
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentDesc, setAssessmentDesc] = useState("");
 
+  const [assessmentCount, setAssessmentCount] = useState(0);
+  const [subjectCount, setSubjectCount] = useState(0);
+
   const assessmentLink = `${HOST_URL}/${selectedAssessment?.hash}/${selectedAssessment?.assessmentId}`;
   const firstName = sessionStorage.getItem("instructor.firstname");
   const lastName = sessionStorage.getItem("instructor.lastname");
@@ -151,6 +154,7 @@ export const Assessments = (): JSX.Element => {
       const email = sessionStorage.getItem("instructor.email");
       const { data } = await getSubjects(email ?? getLoginSession.email);
       if (data.status === 200 && data.message === "Success") {
+        setSubjectCount(data.data.length);
         const subjects = data.data.map((value: GetSubjectResponse, index: number) => {
           return {
             subjectId: value.id,
@@ -161,8 +165,11 @@ export const Assessments = (): JSX.Element => {
         });
         setSelectedSubjectId(subjects[0].subjectId);
         setSubjectList(subjects);
+      } else {
+        setSubjectCount(0);
       }
     } catch (error) {
+      setSubjectCount(0);
       setToast({
         show: true,
         title: "Error Encountered",
@@ -176,6 +183,7 @@ export const Assessments = (): JSX.Element => {
       const email = sessionStorage.getItem("instructor.email");
       const { data } = await getAssessments(email ?? getLoginSession.email);
       if (data.status === 200 && data.message === "Success") {
+        setAssessmentCount(data.data.length);
         const assessments: TDataTableAssessmentData[] = data.data.map((value: GetAssessmentResponse, index: number) => {
           return {
             id: index,
@@ -189,8 +197,11 @@ export const Assessments = (): JSX.Element => {
           }
         });
         setData(assessments);
+      } else {
+        setAssessmentCount(0);
       }
     } catch (error) {
+      setAssessmentCount(0);
       setToast({
         show: true,
         title: "Error Encountered",
@@ -291,7 +302,7 @@ export const Assessments = (): JSX.Element => {
             icon: <i className="fa-solid fa-book"></i>,
             label: "Subjects",
             selected: false,
-            count: 6,
+            count: subjectCount,
             onClick: () => {
               navigate("/instructor/subjects");
             }
@@ -300,7 +311,7 @@ export const Assessments = (): JSX.Element => {
             icon: <i className="fa-solid fa-bars-progress"></i>,
             label: "Assessments",
             selected: true,
-            count: 2,
+            count: assessmentCount,
             onClick: () => {
               navigate("/instructor/assessments");
             }

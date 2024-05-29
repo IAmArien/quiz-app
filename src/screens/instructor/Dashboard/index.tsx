@@ -8,12 +8,51 @@ import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { useSetAtom } from "jotai";
 import { loginSession } from "../../../store";
+import { useEffect, useState } from "react";
+import { getAssessments, getSubjects } from "../../../services/InstructorApi";
 
 export const Dashboard = (): JSX.Element => {
   const navigate = useNavigate();
   const setLoginSession = useSetAtom(loginSession);
   const firstName = sessionStorage.getItem("instructor.firstname");
   const lastName = sessionStorage.getItem("instructor.lastname");
+
+  const [assessmentCount, setAssessmentCount] = useState(0);
+  const [subjectCount, setSubjectCount] = useState(0);
+
+  const fetchSubjects = async () => {
+    try {
+      const email = sessionStorage.getItem("instructor.email") ?? "";
+      const { data } = await getSubjects(email);
+      if (data.status === 200 && data.message === "Success") {
+        setSubjectCount(data.data.length);
+      } else {
+        setSubjectCount(0);
+      }
+    } catch (error) {
+      setSubjectCount(0);
+    }
+  };
+
+  const fetchAssessments = async () => {
+    try {
+      const email = sessionStorage.getItem("instructor.email") ?? "";
+      const { data } = await getAssessments(email);
+      if (data.status === 200 && data.message === "Success") {
+        setAssessmentCount(data.data.length);
+      } else {
+        setAssessmentCount(0);
+      }
+    } catch (error) {
+      setAssessmentCount(0);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubjects();
+    fetchAssessments();
+  }, []);
+
   return (
     <MainContainer
       title="Dashboard"
@@ -30,7 +69,7 @@ export const Dashboard = (): JSX.Element => {
         {
           icon: <i className="fa-solid fa-book"></i>,
           label: "Subjects",
-          count: 6,
+          count: subjectCount,
           selected: false,
           onClick: () => {
             navigate("/instructor/subjects");
@@ -39,7 +78,7 @@ export const Dashboard = (): JSX.Element => {
         {
           icon: <i className="fa-solid fa-bars-progress"></i>,
           label: "Assessments",
-          count: 2,
+          count: assessmentCount,
           selected: false,
           onClick: () => {
             navigate("/instructor/assessments");

@@ -13,7 +13,7 @@ import { loginSession } from '../../../store';
 import { useAtom, useSetAtom } from 'jotai';
 import { loader } from '../../../store/LoaderStore';
 import { toast } from '../../../store/ToastStore';
-import { GetSubjectResponse, addStudentToSubject, addSubject, deleteSubject, getSubjects } from '../../../services';
+import { GetSubjectResponse, addStudentToSubject, addSubject, deleteSubject, getAssessments, getSubjects } from '../../../services';
 
 type TDataTableSubjectsData = {
   id: number;
@@ -38,6 +38,9 @@ export const Subjects = (): JSX.Element => {
   const [subjectDesc, setSubjectDesc] = useState("");
   const [studentId, setStudentId] = useState("");
   const [data, setData] = useState<TDataTableSubjectsData[]>([]);
+
+  const [assessmentCount, setAssessmentCount] = useState(0);
+  const [subjectCount, setSubjectCount] = useState(0);
 
   const firstName = sessionStorage.getItem("instructor.firstname");
   const lastName = sessionStorage.getItem("instructor.lastname");
@@ -122,6 +125,7 @@ export const Subjects = (): JSX.Element => {
       const email = sessionStorage.getItem("instructor.email") ?? getLoginSession.email;
       const { data } = await getSubjects(email);
       if (data.status === 200 && data.message === "Success") {
+        setSubjectCount(data.data.length);
         const subjects = data.data.map((value: GetSubjectResponse, index: number) => {
           return {
             id: index,
@@ -133,8 +137,11 @@ export const Subjects = (): JSX.Element => {
           }
         });
         setData(subjects);
+      } else {
+        setSubjectCount(0);
       }
     } catch (error) {
+      setSubjectCount(0);
       setToast({
         show: true,
         title: "Error Encountered",
@@ -143,8 +150,23 @@ export const Subjects = (): JSX.Element => {
     }
   };
 
+  const fetchAssessments = async () => {
+    try {
+      const email = sessionStorage.getItem("instructor.email") ?? "";
+      const { data } = await getAssessments(email);
+      if (data.status === 200 && data.message === "Success") {
+        setAssessmentCount(data.data.length);
+      } else {
+        setAssessmentCount(0);
+      }
+    } catch (error) {
+      setAssessmentCount(0);
+    }
+  };
+
   useEffect(() => {
     fetchSubjects();
+    fetchAssessments();
   }, []);
 
   const handleOnSubmitSubject = async () => {
@@ -287,7 +309,7 @@ export const Subjects = (): JSX.Element => {
             icon: <i className="fa-solid fa-book"></i>,
             label: "Subjects",
             selected: true,
-            count: 6,
+            count: subjectCount,
             onClick: () => {
               navigate("/instructor/subjects");
             }
@@ -296,7 +318,7 @@ export const Subjects = (): JSX.Element => {
             icon: <i className="fa-solid fa-bars-progress"></i>,
             label: "Assessments",
             selected: false,
-            count: 2,
+            count: assessmentCount,
             onClick: () => {
               navigate("/instructor/assessments");
             }

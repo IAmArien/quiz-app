@@ -6,10 +6,11 @@
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckBoxIcon } from "../../../assets/icons/CheckBoxIcon";
 import { loginSession } from "../../../store";
 import { useAtom } from "jotai";
+import { getAssessments, getSubjects } from "../../../services/InstructorApi";
 
 export const Profile = (): JSX.Element => {
   const navigate = useNavigate();
@@ -31,6 +32,43 @@ export const Profile = (): JSX.Element => {
   const [newPasword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [assessmentCount, setAssessmentCount] = useState(0);
+  const [subjectCount, setSubjectCount] = useState(0);
+
+  const fetchSubjects = async () => {
+    try {
+      const email = sessionStorage.getItem("instructor.email") ?? "";
+      const { data } = await getSubjects(email);
+      if (data.status === 200 && data.message === "Success") {
+        setSubjectCount(data.data.length);
+      } else {
+        setSubjectCount(0);
+      }
+    } catch (error) {
+      setSubjectCount(0);
+    }
+  };
+
+  const fetchAssessments = async () => {
+    try {
+      const email = sessionStorage.getItem("instructor.email") ?? "";
+      const { data } = await getAssessments(email);
+      if (data.status === 200 && data.message === "Success") {
+        setAssessmentCount(data.data.length);
+      } else {
+        setAssessmentCount(0);
+      }
+    } catch (error) {
+      setAssessmentCount(0);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubjects();
+    fetchAssessments();
+  }, []);
+
+
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
@@ -51,7 +89,7 @@ export const Profile = (): JSX.Element => {
         {
           icon: <i className="fa-solid fa-book"></i>,
           label: "Subjects",
-          count: 6,
+          count: subjectCount,
           selected: false,
           onClick: () => {
             navigate("/instructor/subjects");
@@ -60,7 +98,7 @@ export const Profile = (): JSX.Element => {
         {
           icon: <i className="fa-solid fa-bars-progress"></i>,
           label: "Assessments",
-          count: 2,
+          count: assessmentCount,
           selected: false,
           onClick: () => {
             navigate("/instructor/assessments");
