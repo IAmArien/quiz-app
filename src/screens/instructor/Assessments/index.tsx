@@ -95,16 +95,16 @@ export const Assessments = (): JSX.Element => {
         </p>
       )
     },
-    {
-      name: 'Passing',
-      selector: (row: TDataTableAssessmentData) => row.passing,
-      sortable: true,
-      cell: (row: TDataTableAssessmentData) => (
-        <p className="open-sans text-[15px]">
-          {row.passing}
-        </p>
-      )
-    },
+    // {
+    //   name: 'Passing',
+    //   selector: (row: TDataTableAssessmentData) => row.passing,
+    //   sortable: true,
+    //   cell: (row: TDataTableAssessmentData) => (
+    //     <p className="open-sans text-[15px]">
+    //       {row.passing}
+    //     </p>
+    //   )
+    // },
     {
       name: 'Actions',
       sortable: false,
