@@ -34,6 +34,7 @@ export const Assessment = (): JSX.Element => {
   const [assessment, setAssessment] = useState<GetAssessmentResponse | null>(null);
   const [questions, setQuestions] = useState<TQuestions[]>([]);
   const [isDenied, setIsDenied] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
   const [getToast, setToast] = useAtom(toast);
   const [getLoader, setLoader] = useAtom(loader);
@@ -59,7 +60,9 @@ export const Assessment = (): JSX.Element => {
         });
         setQuestions(remoteQuestions);
       }
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       setToast({
         show: true,
         title: "Error Encountered",
@@ -85,10 +88,12 @@ export const Assessment = (): JSX.Element => {
           );
         } else {
           setIsDenied(true);
+          setIsLoading(false);
         }
       }
     } catch (error) {
       setIsDenied(true);
+      setIsLoading(false);
       setToast({
         show: true,
         title: "Error Encountered",
@@ -113,10 +118,12 @@ export const Assessment = (): JSX.Element => {
         onVerify();
       } else {
         setIsDenied(true);
+        setIsLoading(false);
       }
     } catch (error) {
       console.error(error);
       setIsDenied(true);
+      setIsLoading(false);
       setToast({
         show: true,
         title: "Error Encountered",
@@ -126,6 +133,7 @@ export const Assessment = (): JSX.Element => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchAssessment();
   }, []);
 
@@ -378,19 +386,21 @@ export const Assessment = (): JSX.Element => {
             </React.Fragment>
           )
         })}
-        <Row>
-          <Col lg={3}></Col>
-          <Col lg={6} md={12} sm={12}>
-            <div className="pb-[20px]">
-              <Button variant="success" className="w-full" onClick={() => {
-                setConfirmModal(true);
-              }}>
-                <i className="fa-solid fa-clipboard-check"></i>&nbsp;&nbsp;Submit Answers
-              </Button>
-            </div>
-          </Col>
-          <Col lg={3}></Col>
-        </Row>
+        {!isDenied && !isLoading && (
+          <Row>
+            <Col lg={3}></Col>
+            <Col lg={6} md={12} sm={12}>
+              <div className="pb-[20px]">
+                <Button variant="success" className="w-full" onClick={() => {
+                  setConfirmModal(true);
+                }}>
+                  <i className="fa-solid fa-clipboard-check"></i>&nbsp;&nbsp;Submit Answers
+                </Button>
+              </div>
+            </Col>
+            <Col lg={3}></Col>
+          </Row>
+        )}
       </div>
       <div className="z-[9999] absolute left-0 right-0 bottom-0 mb-[20px] flex flex-col justify-center items-center">
         <Toast show={getToast.show} autohide onClose={() => setToast({
