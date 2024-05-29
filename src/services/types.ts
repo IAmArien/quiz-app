@@ -125,3 +125,11 @@ export type GetAnswersResponse = {
   question: string;
   choices: GetAnswerChoicesResponse[];
 };
+
+export type GetStudentSubjectResponse = {
+  subject_id: number;
+  subject_title: string;
+  section: string;
+  subject_description: string;
+  assessments: string;
+};

@@ -4,7 +4,7 @@
  */
 
 import axios from "axios";
-import { AddAnswersResponse, BaseResponse, GetAnswersResponse, LoginResponse, RegisterResponse } from "./types";
+import { AddAnswersResponse, BaseResponse, GetAnswersResponse, GetStudentSubjectResponse, LoginResponse, RegisterResponse } from "./types";
 import { BASE_URL } from "../utils/constants";
 
 export const login = async (email: string, password: string) => {
@@ -109,6 +109,18 @@ export const getAnswers = async (
       params: {
         assessment_id: assessmentId,
         instructor_email: email,
+        student_id: studentId
+      }
+    }
+  );
+  return response;
+};
+
+export const getSubjects = async (studentId: string) => {
+  const response = await axios.get<BaseResponse<GetStudentSubjectResponse[]>>(
+    `${BASE_URL}/students/get_subjects.php`,
+    {
+      params: {
         student_id: studentId
       }
     }

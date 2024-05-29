@@ -9,6 +9,8 @@ import { Badge, Button } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { CSSObject } from "styled-components";
+import { getSubjects } from "../../../services/StudentApi";
+import { GetStudentSubjectResponse } from "../../../services";
 
 type TDataTableSubjectsData = {
   id: number;
@@ -86,17 +88,30 @@ export const Subjects = (): JSX.Element => {
     }
   ];
 
-  useEffect(() => {
-    setData([
-      {
-        id: 1,
-        subjectId: 1,
-        subject: "Mathematics II",
-        section: "Section I",
-        description: "Math subject with 3 sections",
-        assessments: "0 Assessments"
+  const fetchSubjects = async () => {
+    try {
+      const studentId = sessionStorage.getItem("student.studentId") ?? "";
+      const { data } = await getSubjects(studentId);
+      if (data.status === 200 && data.message === "Success") {
+        const newData = data.data.map((value: GetStudentSubjectResponse, index: number) => {
+          return {
+            id: index + 1,
+            subjectId: value.subject_id,
+            subject: value.subject_title,
+            section: value.section,
+            description: value.subject_description,
+            assessments: value.assessments,
+          }
+        });
+        setData(newData);
       }
-    ])
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubjects();
   }, []);
 
   const headCellStyle: CSSObject = {
