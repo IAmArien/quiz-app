@@ -5,18 +5,70 @@
 
 import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { register } from "../../../services/InstructorApi";
+import { useNavigate } from "react-router-dom";
+import { useAtom } from "jotai";
+import { toast } from "../../../store/ToastStore";
+import { merge } from "../../../utils";
 
 export const Register = (): JSX.Element => {
-
+  const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [department, setDepartment] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isError, setIsError] = useState(false);
 
-  const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [getToast, setToast] = useAtom(toast);
+
+  const handleOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    try {
+      const { data } = await register(
+        firstName,
+        lastName,
+        department,
+        emailAddress,
+        confirmPassword
+      );
+      if (data.status === 200 && data.message === "Success") {
+        setIsError(false);
+        sessionStorage.setItem("instructor.firstname", data.data.first_name);
+        sessionStorage.setItem("instructor.lastname", data.data.last_name);
+        sessionStorage.setItem("instructor.email", data.data.email);
+        sessionStorage.setItem("instructor.college", data.data.college);
+        setFirstName("");
+        setLastName("");
+        setDepartment("");
+        setEmailAddress("");
+        setPassword("");
+        setConfirmPassword("");
+        setToast({
+          show: false,
+          title: "",
+          description: ""
+        });
+        setTimeout(() => {
+          navigate("/instructor/dashboard");
+        }, 750);
+      } else {
+        setIsError(true);
+        setToast({
+          show: true,
+          title: "Error Encountered",
+          description: "Something went wrong while action is being done"
+        });
+      }
+    } catch (error) {
+      setIsError(true);
+      setToast({
+        show: true,
+        title: "Error Encountered",
+        description: "Something went wrong while action is being done"
+      });
+    }
   };
 
   return (
@@ -38,7 +90,9 @@ export const Register = (): JSX.Element => {
                     <input
                       type="text"
                       name="firstname"
-                      className="form-control open-sans"
+                      className={merge("form-control open-sans", {
+                        "border-[red]": isError
+                      })}
                       placeholder="First Name"
                       required
                       value={firstName}
@@ -49,7 +103,9 @@ export const Register = (): JSX.Element => {
                     <input
                       type="text"
                       name="lastname"
-                      className="form-control open-sans"
+                      className={merge("form-control open-sans", {
+                        "border-[red]": isError
+                      })}
                       placeholder="Last Name"
                       required
                       value={lastName}
@@ -61,7 +117,9 @@ export const Register = (): JSX.Element => {
                   <input
                     type="text"
                     name="department"
-                    className="form-control open-sans"
+                    className={merge("form-control open-sans", {
+                      "border-[red]": isError
+                    })}
                     placeholder="Department / College"
                     required
                     value={department}
@@ -72,7 +130,9 @@ export const Register = (): JSX.Element => {
                   <input
                     type="email"
                     name="email"
-                    className="form-control open-sans"
+                    className={merge("form-control open-sans", {
+                      "border-[red]": isError
+                    })}
                     placeholder="Email Address"
                     required
                     value={emailAddress}
@@ -83,7 +143,9 @@ export const Register = (): JSX.Element => {
                   <input
                     type="password"
                     name="password"
-                    className="form-control open-sans"
+                    className={merge("form-control open-sans", {
+                      "border-[red]": isError
+                    })}
                     placeholder="New Password"
                     required
                     value={password}
@@ -94,7 +156,9 @@ export const Register = (): JSX.Element => {
                   <input
                     type="password"
                     name="password"
-                    className="form-control open-sans"
+                    className={merge("form-control open-sans", {
+                      "border-[red]": isError
+                    })}
                     placeholder="Confirm Password"
                     required
                     value={confirmPassword}
