@@ -6,7 +6,7 @@
 import { useNavigate } from "react-router-dom";
 import { MainContainer } from "../../../components";
 
-export const Dashboard = (): JSX.Element => {
+export const Subjects = (): JSX.Element => {
   const navigate = useNavigate();
   const firstName = sessionStorage.getItem("student.firstname");
   const lastName = sessionStorage.getItem("student.lastname");
@@ -19,7 +19,7 @@ export const Dashboard = (): JSX.Element => {
         {
           icon: <i className="fa-solid fa-gauge"></i>,
           label: "Dashboard",
-          selected: true,
+          selected: false,
           onClick: () => {
             navigate("/students/dashboard");
           }
@@ -28,7 +28,7 @@ export const Dashboard = (): JSX.Element => {
           icon: <i className="fa-solid fa-book"></i>,
           label: "Subjects",
           count: 6,
-          selected: false,
+          selected: true,
           onClick: () => {
             navigate("/students/subjects");
           }

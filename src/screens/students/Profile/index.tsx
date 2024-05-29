@@ -57,7 +57,7 @@ export const Profile = (): JSX.Element => {
           count: 6,
           selected: false,
           onClick: () => {
-            
+            navigate("/students/subjects");
           }
         },
         {

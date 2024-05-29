@@ -9,6 +9,7 @@ import {
   StudentAssessments,
   StudentAssessmentsConfirmation,
   StudentDashboard,
+  StudentSubjects,
   StudentLogin,
   StudentProfile,
   StudentRegister,
@@ -40,6 +41,10 @@ function App() {
     {
       path: "/students/dashboard",
       element: <StudentDashboard.Dashboard />
+    },
+    {
+      path: "/students/subjects",
+      element: <StudentSubjects.Subjects />
     },
     {
       path: "/students/profile",
