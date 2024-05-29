@@ -64,8 +64,8 @@ export const MainContainer: React.FC<TMainContainerProps> = (props): JSX.Element
                       {value.icon}
                       {value.label}
                     </div>
-                    {value.count && (
-                      <Badge>{value.count}</Badge>
+                    {value.count !== undefined && (
+                      <Badge>{`${value.count}`}</Badge>
                     )}
                   </Button>
                 </React.Fragment>
