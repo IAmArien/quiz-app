@@ -83,7 +83,7 @@ export const MainContainer: React.FC<TMainContainerProps> = (props): JSX.Element
               View Profile
             </p>
           </div>
-          <i className="fa-regular fa-gear text-[#FFFFFF] text-[20px]"></i>
+          <i className="fa-solid fa-gear text-[#FFFFFF] text-[20px]"></i>
         </div>
       </div>
       {/** MAIN CONTAINER */}

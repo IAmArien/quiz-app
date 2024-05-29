@@ -15,16 +15,19 @@ export const Profile = (): JSX.Element => {
   const navigate = useNavigate();
   const [getLoginSession, setLoginSession] = useAtom(loginSession);
   const [firstName, setFirstName] = useState(
-    sessionStorage.getItem("instructor.firstname") ?? ""
+    sessionStorage.getItem("student.firstname") ?? ""
   );
   const [lastName, setLastName] = useState(
-    sessionStorage.getItem("instructor.lastname") ?? ""
+    sessionStorage.getItem("student.lastname") ?? ""
+  );
+  const [studentId, setStudentId] = useState(
+    sessionStorage.getItem("student.studentId") ?? ""
   );
   const [department, setDepartment] = useState(
-    sessionStorage.getItem("instructor.college") ?? ""
+    sessionStorage.getItem("student.college") ?? ""
   );
   const [emailAddress, setEmailAddress] = useState(
-    sessionStorage.getItem("instructor.email") ?? ""
+    sessionStorage.getItem("student.email") ?? ""
   );
   const [updatePassword, setUpdatePassword] = useState(false);
   const [password, setPassword] = useState("");
@@ -45,7 +48,7 @@ export const Profile = (): JSX.Element => {
           label: "Dashboard",
           selected: false,
           onClick: () => {
-            navigate("/instructor/dashboard");
+            navigate("/students/dashboard");
           }
         },
         {
@@ -54,16 +57,7 @@ export const Profile = (): JSX.Element => {
           count: 6,
           selected: false,
           onClick: () => {
-            navigate("/instructor/subjects");
-          }
-        },
-        {
-          icon: <i className="fa-solid fa-bars-progress"></i>,
-          label: "Assessments",
-          count: 2,
-          selected: false,
-          onClick: () => {
-            navigate("/instructor/assessments");
+            
           }
         },
         {
@@ -71,7 +65,7 @@ export const Profile = (): JSX.Element => {
           label: "Profile",
           selected: true,
           onClick: () => {
-            navigate("/instructor/profile");
+            navigate("/students/profile");
           }
         },
         {
@@ -79,20 +73,14 @@ export const Profile = (): JSX.Element => {
           label: "Logout",
           selected: false,
           onClick: () => {
-            sessionStorage.removeItem("instructor.firstname");
-            sessionStorage.removeItem("instructor.lastname");
-            sessionStorage.removeItem("instructor.email");
-            sessionStorage.removeItem("instructor.college");
-            setLoginSession({
-              login: false,
-              email: "",
-              first_name: "",
-              last_name: "",
-              college: ""
-            });
-            navigate("/instructor");
+            sessionStorage.removeItem("student.firstname");
+            sessionStorage.removeItem("student.lastname");
+            sessionStorage.removeItem("student.studentId");
+            sessionStorage.removeItem("student.email");
+            sessionStorage.removeItem("student.college");
+            navigate("/students");
           }
-        }
+        },
       ]}>
       <Container>
         <div>
@@ -100,7 +88,7 @@ export const Profile = (): JSX.Element => {
             <Col lg={6} md={12} sm={12}>
               <div className="bg-[#FFFFFF] rounded-[10px] pt-[30px]">
                 <h3 className="text-[25px] open-sans">
-                  Update your Instructor account
+                  Update your Student account
                 </h3>
                 <p className="text-[#8c8c8c] text-[15px] open-sans mt-[8px]">
                   Please fill up all the required fields to update your account.
@@ -131,6 +119,17 @@ export const Profile = (): JSX.Element => {
                         }}
                       />
                     </div>
+                    <input
+                      type="text"
+                      name="student_id"
+                      className="form-control open-sans"
+                      placeholder="Student ID"
+                      required
+                      value={studentId}
+                      onChange={(event) => {
+                        setStudentId(event.currentTarget.value);
+                      }}
+                    />
                     <input
                       type="text"
                       name="department"

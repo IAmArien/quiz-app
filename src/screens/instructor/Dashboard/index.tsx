@@ -37,7 +37,7 @@ export const Dashboard = (): JSX.Element => {
           }
         },
         {
-          icon: <i className="fa-regular fa-bars-progress"></i>,
+          icon: <i className="fa-solid fa-bars-progress"></i>,
           label: "Assessments",
           count: 2,
           selected: false,

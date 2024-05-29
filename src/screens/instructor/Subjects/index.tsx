@@ -293,7 +293,7 @@ export const Subjects = (): JSX.Element => {
             }
           },
           {
-            icon: <i className="fa-regular fa-bars-progress"></i>,
+            icon: <i className="fa-solid fa-bars-progress"></i>,
             label: "Assessments",
             selected: false,
             count: 2,

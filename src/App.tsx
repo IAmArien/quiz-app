@@ -10,6 +10,7 @@ import {
   StudentAssessmentsConfirmation,
   StudentDashboard,
   StudentLogin,
+  StudentProfile,
   StudentRegister,
   Assessments as InstructorAssessments,
   Dashboard as InstructorDashboard,
@@ -39,6 +40,10 @@ function App() {
     {
       path: "/students/dashboard",
       element: <StudentDashboard.Dashboard />
+    },
+    {
+      path: "/students/profile",
+      element: <StudentProfile.Profile />
     },
     {
       path: "/instructor",

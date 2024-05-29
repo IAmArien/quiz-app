@@ -17,15 +17,15 @@ export const Dashboard = (): JSX.Element => {
       profile={{ name: `${firstName} ${lastName}` }}
       sidebar={[
         {
-          icon: <></>,
+          icon: <i className="fa-solid fa-gauge"></i>,
           label: "Dashboard",
           selected: true,
           onClick: () => {
-
+            navigate("/students/dashboard");
           }
         },
         {
-          icon: <></>,
+          icon: <i className="fa-solid fa-book"></i>,
           label: "Subjects",
           count: 6,
           selected: false,
@@ -34,15 +34,15 @@ export const Dashboard = (): JSX.Element => {
           }
         },
         {
-          icon: <></>,
+          icon: <i className="fa-solid fa-circle-user"></i>,
           label: "Profile",
           selected: false,
           onClick: () => {
-            
+            navigate("/students/profile");
           }
         },
         {
-          icon: <></>,
+          icon: <i className="fa-solid fa-right-from-bracket"></i>,
           label: "Logout",
           selected: false,
           onClick: () => {
@@ -57,5 +57,5 @@ export const Dashboard = (): JSX.Element => {
       ]}>
       <div></div>
     </MainContainer>
-  )
+  );
 };

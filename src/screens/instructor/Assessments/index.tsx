@@ -297,7 +297,7 @@ export const Assessments = (): JSX.Element => {
             }
           },
           {
-            icon: <i className="fa-regular fa-bars-progress"></i>,
+            icon: <i className="fa-solid fa-bars-progress"></i>,
             label: "Assessments",
             selected: true,
             count: 2,

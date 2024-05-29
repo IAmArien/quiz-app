@@ -8,3 +8,4 @@ export * as StudentAssessmentsConfirmation from './Assessments/Confirmation';
 export * as StudentRegister from './Register';
 export * as StudentLogin from './Login';
 export * as StudentDashboard from './Dashboard';
+export * as StudentProfile from './Profile';
