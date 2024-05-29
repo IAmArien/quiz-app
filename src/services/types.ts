@@ -132,4 +132,14 @@ export type GetStudentSubjectResponse = {
   section: string;
   subject_description: string;
   assessments: string;
+  assessments_data: GetStudentSubjectAssessmentsResponse[];
+};
+
+export type GetStudentSubjectAssessmentsResponse = {
+  assessment_id: string;
+  assessment_title: string;
+  assessment_subject_id: string;
+  assessment_status: string;
+  assessment_hash: string;
+  instructor_email: string;
 };

@@ -5,12 +5,24 @@
 
 import { useNavigate } from "react-router-dom";
 import { MainContainer } from "../../../components";
-import { Badge, Button } from "react-bootstrap";
+import { Badge, Button, Modal } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { CSSObject } from "styled-components";
 import { getSubjects } from "../../../services/StudentApi";
 import { GetStudentSubjectResponse } from "../../../services";
+import { HOST_URL } from "../../../utils/constants";
+import { useSetAtom } from "jotai";
+import { toast } from "../../../store/ToastStore";
+
+type TDataTableSubjectsAssessmentsData = {
+  assessment_id: string;
+  assessment_title: string;
+  assessment_subject_id: string;
+  assessment_status: string;
+  assessment_hash: string;
+  instructor_email: string;
+};
 
 type TDataTableSubjectsData = {
   id: number;
@@ -19,12 +31,16 @@ type TDataTableSubjectsData = {
   section: string;
   description: string;
   assessments: string;
+  assessments_data: TDataTableSubjectsAssessmentsData[];
 };
 
 export const Subjects = (): JSX.Element => {
   const navigate = useNavigate();
   const [selectedSubject, setSelectedSubject] = useState<TDataTableSubjectsData | null>(null);
   const [data, setData] = useState<TDataTableSubjectsData[]>([]);
+  const [showAssessmentModal, setShowAssessmentModal] = useState(false);
+  const setToast = useSetAtom(toast);
+
   const firstName = sessionStorage.getItem("student.firstname");
   const lastName = sessionStorage.getItem("student.lastname");
 
@@ -79,6 +95,7 @@ export const Subjects = (): JSX.Element => {
       cell: (row: TDataTableSubjectsData) => (
         <div className="flex flex-row gap-[5px]">
           <Button variant="outline-success" size="sm" onClick={() => {
+            setShowAssessmentModal(true);
             setSelectedSubject(row);
           }}>
             <i className="fa-solid fa-eye"></i>&nbsp;&nbsp;View Assessments
@@ -101,6 +118,7 @@ export const Subjects = (): JSX.Element => {
             section: value.section,
             description: value.subject_description,
             assessments: value.assessments,
+            assessments_data: value.assessments_data
           }
         });
         setData(newData);
@@ -123,67 +141,123 @@ export const Subjects = (): JSX.Element => {
   };
 
   return (
-    <MainContainer
-      title="Dashboard"
-      profile={{ name: `${firstName} ${lastName}` }}
-      sidebar={[
-        {
-          icon: <i className="fa-solid fa-gauge"></i>,
-          label: "Dashboard",
-          selected: false,
-          onClick: () => {
-            navigate("/students/dashboard");
-          }
-        },
-        {
-          icon: <i className="fa-solid fa-book"></i>,
-          label: "Subjects",
-          count: 6,
-          selected: true,
-          onClick: () => {
-            navigate("/students/subjects");
-          }
-        },
-        {
-          icon: <i className="fa-solid fa-circle-user"></i>,
-          label: "Profile",
-          selected: false,
-          onClick: () => {
-            navigate("/students/profile");
-          }
-        },
-        {
-          icon: <i className="fa-solid fa-right-from-bracket"></i>,
-          label: "Logout",
-          selected: false,
-          onClick: () => {
-            sessionStorage.removeItem("student.firstname");
-            sessionStorage.removeItem("student.lastname");
-            sessionStorage.removeItem("student.studentId");
-            sessionStorage.removeItem("student.email");
-            sessionStorage.removeItem("student.college");
-            navigate("/students");
-          }
-        },
-      ]}>
-      <div className="flex flex-col pt-[20px]">
-        <DataTable
-          title="Assigned Subjects"
-          striped
-          selectableRows={false}
-          dense={false}
-          highlightOnHover
-          pagination
-          className="open-sans-600"
-          customStyles={{
-            headCells: {
-              style: headCellStyle
+    <>
+      <MainContainer
+        title="Dashboard"
+        profile={{ name: `${firstName} ${lastName}` }}
+        sidebar={[
+          {
+            icon: <i className="fa-solid fa-gauge"></i>,
+            label: "Dashboard",
+            selected: false,
+            onClick: () => {
+              navigate("/students/dashboard");
             }
-          }}
-          columns={columns}
-          data={data}
-        />
-      </div>
-    </MainContainer>
+          },
+          {
+            icon: <i className="fa-solid fa-book"></i>,
+            label: "Subjects",
+            count: 6,
+            selected: true,
+            onClick: () => {
+              navigate("/students/subjects");
+            }
+          },
+          {
+            icon: <i className="fa-solid fa-circle-user"></i>,
+            label: "Profile",
+            selected: false,
+            onClick: () => {
+              navigate("/students/profile");
+            }
+          },
+          {
+            icon: <i className="fa-solid fa-right-from-bracket"></i>,
+            label: "Logout",
+            selected: false,
+            onClick: () => {
+              sessionStorage.removeItem("student.firstname");
+              sessionStorage.removeItem("student.lastname");
+              sessionStorage.removeItem("student.studentId");
+              sessionStorage.removeItem("student.email");
+              sessionStorage.removeItem("student.college");
+              navigate("/students");
+            }
+          },
+        ]}>
+        <div className="flex flex-col pt-[20px]">
+          <DataTable
+            title="Assigned Subjects"
+            striped
+            selectableRows={false}
+            dense={false}
+            highlightOnHover
+            pagination
+            className="open-sans-600"
+            customStyles={{
+              headCells: {
+                style: headCellStyle
+              }
+            }}
+            columns={columns}
+            data={data}
+          />
+        </div>
+      </MainContainer>
+      <Modal show={showAssessmentModal} centered onHide={() => setShowAssessmentModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title className="open-sans-600">Assessment Link</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="flex flex-col gap-[17px]">
+            <p className="open-sans">
+              Copy this assessment link to view the questions published
+            </p>
+            <div className="flex flex-col gap-[7px]">
+              {selectedSubject?.assessments_data.map((value: TDataTableSubjectsAssessmentsData) => {
+                const assessmentLink = `${HOST_URL}/${value?.assessment_hash}/${value?.assessment_id}`;
+                return (
+                  <div className="flex flex-row gap-[6px]">
+                    <input
+                      type="text"
+                      name="assessment_link"
+                      className="form-control open-sans-600 text-[#0d6efd]"
+                      placeholder="Assessment Link"
+                      required
+                      value={assessmentLink}
+                      readOnly
+                    />
+                    <Button variant="success" onClick={() => {
+                      navigate(`/students/assessment/${value.assessment_hash}/${value.assessment_id}`)
+                    }}>
+                      <i className="fa-solid fa-arrow-right"></i>
+                    </Button>
+                    <Button variant="secondary" onClick={() => {
+                      navigator.clipboard.writeText(assessmentLink);
+                      setShowAssessmentModal(false);
+                      setToast({
+                        show: true,
+                        title: "Link Copied",
+                        description: `${assessmentLink} was copied to clipboard`
+                      });
+                    }}>
+                      <i className="fa-solid fa-clipboard"></i>
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="open-sans-600"
+            variant="secondary"
+            onClick={() => setShowAssessmentModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };
