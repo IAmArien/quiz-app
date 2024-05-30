@@ -255,6 +255,15 @@ export const Subjects = (): JSX.Element => {
           });
           fetchSubjects();
         }, 500);
+      } else {
+        setTimeout(() => {
+          setLoader({ show: false });
+          setToast({
+            show: true,
+            title: "Error Encountered",
+            description: "Something went wrong while action is being done"
+          });
+        }, 500);
       }
     } catch (error) {
       setTimeout(() => {
