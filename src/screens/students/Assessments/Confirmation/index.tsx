@@ -337,9 +337,6 @@ export const AssessmentConfirmation = (): JSX.Element => {
               }}>
                 <i className="fa-solid fa-arrow-left-long"></i>&nbsp;&nbsp;&nbsp;Back
               </Button>
-              <Button variant="outline-success" className="open-sans" onClick={() => {}}>
-                <i className="fa-solid fa-file-arrow-down"></i>&nbsp;&nbsp;&nbsp;Download Result
-              </Button>
             </div>
           </Col>
           <Col lg={3}></Col>
