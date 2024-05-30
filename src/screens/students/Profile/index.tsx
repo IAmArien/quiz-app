@@ -6,10 +6,11 @@
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { MainContainer } from "../../../components";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckBoxIcon } from "../../../assets/icons/CheckBoxIcon";
 import { loginSession } from "../../../store";
 import { useAtom } from "jotai";
+import { getSubjects } from "../../../services/StudentApi";
 
 export const Profile = (): JSX.Element => {
   const navigate = useNavigate();
@@ -33,10 +34,30 @@ export const Profile = (): JSX.Element => {
   const [password, setPassword] = useState("");
   const [newPasword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [subjectCount, setSubjectCount] = useState(0);
 
   const handleOnSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
+
+  const fetchSubjects = async () => {
+    try {
+      const studentId = sessionStorage.getItem("student.studentId") ?? "";
+      const { data } = await getSubjects(studentId);
+      if (data.status === 200 && data.message === "Success") {
+        setSubjectCount(data.data.length);
+      } else {
+        setSubjectCount(0);
+      }
+    } catch (error) {
+      console.error(error);
+      setSubjectCount(0);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubjects();
+  }, []);
 
   return (
     <MainContainer
@@ -54,7 +75,7 @@ export const Profile = (): JSX.Element => {
         {
           icon: <i className="fa-solid fa-book"></i>,
           label: "Subjects",
-          count: 6,
+          count: subjectCount,
           selected: false,
           onClick: () => {
             navigate("/students/subjects");

@@ -39,6 +39,7 @@ export const Subjects = (): JSX.Element => {
   const [selectedSubject, setSelectedSubject] = useState<TDataTableSubjectsData | null>(null);
   const [data, setData] = useState<TDataTableSubjectsData[]>([]);
   const [showAssessmentModal, setShowAssessmentModal] = useState(false);
+  const [subjectCount, setSubjectCount] = useState(0);
   const setToast = useSetAtom(toast);
 
   const firstName = sessionStorage.getItem("student.firstname");
@@ -122,9 +123,13 @@ export const Subjects = (): JSX.Element => {
           }
         });
         setData(newData);
+        setSubjectCount(newData.length);
+      } else {
+        setSubjectCount(0);
       }
     } catch (error) {
       console.error(error);
+      setSubjectCount(0);
     }
   };
 
@@ -157,7 +162,7 @@ export const Subjects = (): JSX.Element => {
           {
             icon: <i className="fa-solid fa-book"></i>,
             label: "Subjects",
-            count: 6,
+            count: subjectCount,
             selected: true,
             onClick: () => {
               navigate("/students/subjects");

@@ -5,11 +5,33 @@
 
 import { useNavigate } from "react-router-dom";
 import { MainContainer } from "../../../components";
+import { useEffect, useState } from "react";
+import { getSubjects } from "../../../services/StudentApi";
 
 export const Dashboard = (): JSX.Element => {
   const navigate = useNavigate();
+  const [subjectCount, setSubjectCount] = useState(0);
   const firstName = sessionStorage.getItem("student.firstname");
   const lastName = sessionStorage.getItem("student.lastname");
+
+  const fetchSubjects = async () => {
+    try {
+      const studentId = sessionStorage.getItem("student.studentId") ?? "";
+      const { data } = await getSubjects(studentId);
+      if (data.status === 200 && data.message === "Success") {
+        setSubjectCount(data.data.length);
+      } else {
+        setSubjectCount(0);
+      }
+    } catch (error) {
+      console.error(error);
+      setSubjectCount(0);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubjects();
+  }, []);
 
   return (
     <MainContainer
@@ -27,7 +49,7 @@ export const Dashboard = (): JSX.Element => {
         {
           icon: <i className="fa-solid fa-book"></i>,
           label: "Subjects",
-          count: 6,
+          count: subjectCount,
           selected: false,
           onClick: () => {
             navigate("/students/subjects");
