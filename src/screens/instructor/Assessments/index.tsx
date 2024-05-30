@@ -14,7 +14,7 @@ import { useAtom, useSetAtom } from "jotai";
 import { loader } from "../../../store/LoaderStore";
 import { toast } from "../../../store/ToastStore";
 import { GetAssessmentResponse, GetSubjectResponse, addAssessment, getAssessments, getSubjects } from "../../../services";
-import { HOST_URL } from "../../../utils/constants";
+import { BASE_URL, HOST_URL } from "../../../utils/constants";
 
 type TDataTableAssessmentData = {
   id: number | string;
@@ -140,7 +140,9 @@ export const Assessments = (): JSX.Element => {
             <i className="fa-regular fa-pen-to-square"></i>
           </Button>
           <Button variant="secondary" size="sm" onClick={() => {
+            const email = sessionStorage.getItem("instructor.email") ?? "";
             setSelectedAssessment(row);
+            window.location.href = `${BASE_URL}/instructor/export_result.php?instructor_email=${email}&assessment_id=${row.assessmentId}`;
           }}>
             <i className="fa-solid fa-file-export"></i>
           </Button>
